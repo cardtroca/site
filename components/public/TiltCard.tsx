@@ -46,15 +46,22 @@ export function TiltCard({ src, alt, width }: { src: string | null; alt: string;
       listening = true;
       window.addEventListener("deviceorientation", onOrientation);
     };
-    const onFirstTouch = async () => {
+    // iOS só aceita requestPermission dentro de um gesto válido (click/touchend).
+    // O listener fica até a resposta ser definitiva (granted ou denied).
+    let asking = false;
+    const onTap = async () => {
       const D = window.DeviceOrientationEvent as IOSOrientation | undefined;
-      if (!D) return;
-      if (typeof D.requestPermission === "function") {
-        try {
-          if ((await D.requestPermission()) === "granted") listen();
-        } catch {
-          // permissão negada: só o balanço
-        }
+      if (!D || typeof D.requestPermission !== "function" || asking) return;
+      asking = true;
+      try {
+        const answer = await D.requestPermission();
+        if (answer === "granted") listen();
+        stage.removeEventListener("click", onTap);
+        stage.removeEventListener("touchend", onTap);
+      } catch {
+        // rejeitado fora de gesto válido: tenta de novo no próximo toque
+      } finally {
+        asking = false;
       }
     };
 
@@ -63,7 +70,8 @@ export function TiltCard({ src, alt, width }: { src: string | null; alt: string;
 
     stage.addEventListener("mousemove", onMove);
     stage.addEventListener("mouseleave", onLeave);
-    stage.addEventListener("touchstart", onFirstTouch, { once: true });
+    stage.addEventListener("click", onTap);
+    stage.addEventListener("touchend", onTap);
 
     const idle = () => {
       const sensorActive = performance.now() - lastSensor < 600;
@@ -80,7 +88,8 @@ export function TiltCard({ src, alt, width }: { src: string | null; alt: string;
       cancelAnimationFrame(raf);
       stage.removeEventListener("mousemove", onMove);
       stage.removeEventListener("mouseleave", onLeave);
-      stage.removeEventListener("touchstart", onFirstTouch);
+      stage.removeEventListener("click", onTap);
+      stage.removeEventListener("touchend", onTap);
       window.removeEventListener("deviceorientation", onOrientation);
     };
   }, []);

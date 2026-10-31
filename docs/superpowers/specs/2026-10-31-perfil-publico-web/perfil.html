@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Perfil público na web — v1</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0" rel="stylesheet">
+<style>
+  /* Tokens de lib/core/theme/app_theme.dart */
+  :root{
+    --bg:#F5F6F6; --surface:#FFFFFF; --surfaceVar:#EEF0F0;
+    --primary:#029779; --primaryLight:#E6FAF4; --primaryDark:#104E4B;
+    --text:#11161D; --text2:#586572; --text3:#8A95A2; --border:#E3E6E6; --gold:#D98E04;
+    --soft:0 8px 24px -8px rgba(0,0,0,.06);
+    --subtle:0 1px 2px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Poppins,system-ui,sans-serif;background:#dfe5e4;color:var(--text);padding:28px 20px 60px;-webkit-font-smoothing:antialiased}
+  .ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;display:inline-block;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
+  h1{font-size:21px;font-weight:600;text-align:center}
+  h2{font-size:16px;font-weight:600;text-align:center;margin:40px 0 4px}
+  .sub{color:var(--text2);text-align:center;font-size:13px;margin:6px auto 18px;max-width:760px}
+
+  /* ---------- componentes do perfil (profile_header.dart, profile_shared.dart) ---------- */
+  .circle{width:38px;height:38px;border-radius:50%;background:var(--surface);box-shadow:var(--subtle);display:flex;align-items:center;justify-content:center;color:var(--text);cursor:pointer;border:none}
+  .circle .ms{font-size:20px}
+  .header{display:flex;flex-direction:column;align-items:center;text-align:center;padding:8px 16px 0}
+  .pavatar{width:92px;height:92px;border-radius:50%;background:var(--surface);padding:3px;box-shadow:var(--soft)}
+  .pavatar div{width:100%;height:100%;border-radius:50%;background:var(--primaryDark);color:#fff;font-size:34px;font-weight:600;display:flex;align-items:center;justify-content:center}
+  .pname{font-size:22px;font-weight:600;letter-spacing:-.3px;margin-top:12px;line-height:1.25}
+  .follows{font-size:13px;color:var(--text2);margin-top:2px;cursor:pointer}
+  .meta{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:6px;margin-top:6px}
+  .planpill{height:22px;display:flex;align-items:center;gap:3px;padding:0 8px;border-radius:999px;background:var(--primaryDark);color:#fff;font-size:11px;font-weight:600}
+  .planpill .ms{font-size:12px;font-variation-settings:'FILL' 1}
+  .place{display:flex;align-items:center;gap:2px;font-size:13px;color:var(--text2)}
+  .place .ms{font-size:14px}
+  .bio{font-size:14px;color:var(--text2);margin-top:10px;line-height:1.45}
+  .followrow{display:flex;gap:10px;width:100%;margin-top:16px}
+  .followbtn{flex:1;height:46px;border:none;border-radius:999px;background:var(--primaryDark);color:#fff;font:600 14px Poppins;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+  .followbtn .ms{font-size:18px}
+  .medalcard{width:100%;margin-top:16px;background:var(--surface);border-radius:16px;box-shadow:var(--subtle);padding:12px;display:flex;align-items:center;gap:12px;text-align:left;cursor:pointer}
+  .coin{width:44px;height:44px;border-radius:50%;flex:none;background:radial-gradient(circle at 35% 30%,#fff3c4,#F5B73D 45%,#D98E04 70%,#a86a00);box-shadow:inset 0 0 0 3px rgba(255,255,255,.35),0 2px 6px rgba(168,106,0,.35);display:flex;align-items:center;justify-content:center;color:#7a4d00;animation:spin 6s ease-in-out infinite}
+  .coin .ms{font-size:22px;font-variation-settings:'FILL' 1}
+  @keyframes spin{0%,70%{transform:rotateY(0)}85%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+  .mt1{font-size:15px;font-weight:600}
+  .mt2{font-size:12px;color:var(--text2)}
+  .chev{color:var(--text3);margin-left:auto;font-size:24px}
+  .stats{width:100%;margin-top:12px;background:var(--surface);border-radius:22px;box-shadow:var(--soft);display:flex;padding:14px 4px}
+  .stat{flex:1;text-align:center}
+  .stat b{font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:2px}
+  .stat b .ms{font-size:17px;color:var(--gold);font-variation-settings:'FILL' 1}
+  .stat span{font-size:11px;color:var(--text2)}
+  .vsep{width:1px;background:rgba(227,230,230,.7);margin:4px 0}
+  /* abas (_TabsHeader) */
+  .tabs{position:sticky;top:0;z-index:6;background:var(--bg);padding:16px 16px 8px}
+  .seg{position:relative;display:flex;background:var(--surfaceVar);border-radius:999px;padding:4px}
+  .seg .thumb{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);background:var(--surface);border-radius:999px;box-shadow:var(--subtle);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+  .seg button{position:relative;flex:1;height:36px;border:none;background:none;font:500 13px Poppins;color:var(--text2);cursor:pointer}
+  .seg button.on{color:var(--text);font-weight:600}
+  .seg[data-tab="1"] .thumb{transform:translateX(100%)}
+  .countrow{display:flex;align-items:center;justify-content:space-between;padding:2px 12px 2px 20px;font-size:13px;color:var(--text2)}
+  .filter{display:flex;align-items:center;gap:4px;border:none;background:none;font:600 13px Poppins;color:var(--text);cursor:pointer;padding:8px}
+  .filter .ms{font-size:18px}
+  .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:4px 16px 24px}
+  /* ListingGridTile (compact) */
+  .tile{background:var(--surface);border-radius:16px;box-shadow:var(--soft);padding:6px 6px 8px;cursor:pointer;transition:transform .15s}
+  .tile:active{transform:scale(.97)}
+  .timg{position:relative;aspect-ratio:63/88;border-radius:8px;overflow:hidden;background:var(--surfaceVar)}
+  .timg img{width:100%;height:100%;object-fit:cover;display:block}
+  .lang{position:absolute;left:4px;top:4px;background:rgba(255,255,255,.92);border-radius:999px;padding:1px 5px;font-size:10px;font-weight:600;color:rgba(0,0,0,.87)}
+  .eye{position:absolute;right:4px;top:4px;width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;color:var(--text)}
+  .eye .ms{font-size:14px}
+  .tn{font-size:12px;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tp{font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}
+  .tc{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile.coll .tp{display:none}
+
+  /* ---------- celular ---------- */
+  .mobilewrap{display:flex;justify-content:center}
+  .phone{width:360px;height:740px;border-radius:46px;background:#111;padding:10px;box-shadow:0 30px 60px -20px rgba(0,0,0,.35)}
+  .screen{position:relative;width:100%;height:100%;border-radius:37px;overflow:hidden;background:var(--bg)}
+  .scroll{position:absolute;inset:86px 0 0 0;overflow-y:auto;scrollbar-width:none}
+  .scroll::-webkit-scrollbar{display:none}
+  .scroll .tabs{top:0}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:96px;height:26px;background:#111;border-radius:20px;z-index:30}
+  .url{position:absolute;bottom:0;left:0;right:0;height:46px;background:rgba(245,246,246,.96);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;z-index:25}
+  .url div{background:#e4e7e7;border-radius:10px;padding:5px 14px;font-size:11px;color:var(--text2)}
+  .smart{position:absolute;top:0;left:0;right:0;z-index:26;background:rgba(245,246,246,.96);backdrop-filter:blur(12px);border-bottom:.5px solid var(--border);padding:40px 12px 8px;display:flex;align-items:center;gap:10px}
+  .applogo{width:36px;height:36px;border-radius:10px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--subtle);flex:none}
+  .applogo .ms{font-size:20px}
+  .smart .a{font-size:13px;font-weight:600;line-height:1.3}
+  .smart .b{font-size:11px;color:var(--text2);line-height:1.3}
+  .smart button{margin-left:auto;background:var(--primary);color:#fff;border:none;border-radius:999px;font:600 12.5px Poppins;padding:7px 16px;cursor:pointer}
+  .mbar{display:flex;justify-content:flex-end;padding:4px 16px 0}
+  .scroll .grid{padding-bottom:70px}
+
+  /* folha de download */
+  .sheetbg{position:absolute;inset:0;background:rgba(17,22,29,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:24px 24px 0 0;padding:10px 20px 24px;transform:translateY(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:41}
+  .open > .sheetbg{opacity:1;pointer-events:auto}
+  .open > .sheet{transform:none}
+  .grab{width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 14px}
+  .dl-head{display:flex;align-items:center;gap:14px}
+  .dl-av{width:52px;height:52px;border-radius:50%;background:var(--primaryDark);color:#fff;font-size:22px;font-weight:600;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 0 0 3px #fff,var(--soft)}
+  .dl-title{font-size:18px;font-weight:600;line-height:1.25}
+  .t1{font-size:14px;font-weight:600;line-height:1.3}
+  .t2{font-size:12px;color:var(--text2);line-height:1.3}
+  .feats{list-style:none;margin:16px 0;display:grid;gap:10px}
+  .feats li{display:flex;gap:12px;align-items:center}
+  .iconbox{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none;background:var(--primaryLight);color:var(--primary)}
+  .iconbox .ms{font-size:19px}
+  .stores{display:flex;flex-direction:column;gap:8px}
+  .store{display:flex;align-items:center;gap:10px;background:#000;color:#fff;border-radius:12px;padding:8px 16px;justify-content:center;cursor:pointer;text-decoration:none}
+  .store svg{width:22px;height:22px;fill:#fff}
+  .store div{text-align:left;line-height:1.1}
+  .store small{font-size:9.5px;display:block}
+  .store b{font-size:16px;font-weight:600}
+  .already{display:block;text-align:center;margin-top:14px;font-size:13px;color:var(--primary);font-weight:600;cursor:pointer}
+
+  /* ---------- desktop ---------- */
+  .deskfit{width:100%;max-width:1180px;margin:0 auto}
+  .browser{width:1180px;transform-origin:top left;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 30px 60px -20px rgba(0,0,0,.3)}
+  .chrome{height:40px;background:#e9ecec;display:flex;align-items:center;gap:7px;padding:0 14px}
+  .chrome i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
+  .chrome i:nth-child(2){background:#febc2e}.chrome i:nth-child(3){background:#28c840}
+  .chrome .addr{margin-left:18px;flex:1;max-width:520px;background:#fff;border-radius:8px;padding:4px 12px;font-size:12px;color:var(--text2)}
+  .page{position:relative;height:780px;overflow:hidden;background:var(--bg)}
+  .pscroll{position:absolute;inset:0;overflow-y:auto}
+  .nav{height:64px;background:rgba(245,246,246,.94);backdrop-filter:blur(12px);border-bottom:.5px solid var(--border);display:flex;align-items:center;padding:0 48px;gap:26px;position:sticky;top:0;z-index:8}
+  .brand{font-weight:600;font-size:22px;color:var(--primary);letter-spacing:-.3px}
+  .nav a{font-size:13.5px;color:var(--text2);text-decoration:none}
+  .nav .sp{flex:1}
+  .nav button{background:var(--primary);color:#fff;border:none;border-radius:999px;font:600 13px Poppins;padding:9px 18px;cursor:pointer}
+  .dmain{display:grid;grid-template-columns:340px 1fr;gap:32px;padding:28px 48px 40px;align-items:start}
+  .dleft{position:sticky;top:92px;background:var(--surface);border-radius:28px;box-shadow:var(--soft);padding:28px 22px 22px}
+  .dleft .share{position:absolute;top:16px;right:16px}
+  .dleft .stats{box-shadow:none;background:var(--bg)}
+  .dright .tabs{top:64px;padding:0 0 8px;background:var(--bg)}
+  .dright .seg{max-width:420px}
+  .dright .countrow{padding:10px 0 4px 4px}
+  .dright .grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;padding:4px 0 24px}
+  .foot{border-top:.5px solid var(--border);padding:20px 48px;font-size:12px;color:var(--text3);display:flex;justify-content:space-between;background:var(--surface)}
+  .modalbg{position:absolute;inset:0;background:rgba(17,22,29,.5);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40}
+  .modal{position:absolute;top:50%;left:50%;width:740px;transform:translate(-50%,-46%) scale(.97);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.2,.8,.2,1);z-index:41;background:var(--surface);border-radius:24px;padding:30px;display:grid;grid-template-columns:1fr 236px;gap:28px}
+  .open > .modalbg{opacity:1;pointer-events:auto}
+  .open > .modal{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+  .modal .x{position:absolute;top:14px;right:14px}
+  .modal .stores{flex-direction:row}
+  .modal .store{flex:1}
+  .qrbox{background:var(--primaryLight);border-radius:22px;padding:18px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .qr{width:172px;height:172px;background:#fff;border-radius:14px;padding:10px}
+  .qrbox p{font-size:12px;color:var(--text2);margin-top:10px;line-height:1.4}
+  .qrbox p b{color:var(--text);font-weight:600}
+  .toast{position:absolute;left:50%;top:110px;transform:translate(-50%,-20px);opacity:0;transition:all .25s;background:var(--text);color:#fff;font-size:12.5px;border-radius:999px;padding:8px 14px;z-index:50;pointer-events:none;white-space:nowrap}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .note{max-width:860px;margin:28px auto 0;background:#fff;border-radius:16px;padding:16px 20px;font-size:13px;color:var(--text2);line-height:1.6}
+  .note b{color:var(--text);font-weight:600}
+</style>
+</head>
+<body>
+<h1>Perfil público na web, v1</h1>
+<p class="sub">Mesmo topo, abas e grade de <code>public_profile_screen.dart</code>. As abas funcionam. Seguir, Filtrar, olho e medalha abrem o download. Tocar numa carta abre a página web daquele anúncio.</p>
+
+<h2>Celular</h2>
+<div class="mobilewrap">
+  <div class="phone"><div class="screen" id="m">
+    <div class="notch"></div>
+    <div class="smart"><div class="applogo"><span class="ms">style</span></div><div><div class="a">CardTroca</div><div class="b">Grátis na App Store e Google Play</div></div><button class="dl">Baixar</button></div>
+    <div class="scroll">
+      <div class="mbar"><button class="circle share"><span class="ms">ios_share</span></button></div>
+      <div data-slot="header"></div>
+      <div data-slot="list"></div>
+    </div>
+    <div class="toast">Anúncio abre em cardtroca.com/card/…</div>
+    <div class="url"><div>🔒 cardtroca.com/profile/7c1e…</div></div>
+    <div class="sheetbg"></div>
+    <div class="sheet"><div class="grab"></div><div data-slot="dl"></div></div>
+  </div></div>
+</div>
+
+<h2>Computador</h2>
+<p class="sub">Topo do perfil vira uma coluna fixa à esquerda; a grade ocupa o resto com 5 cartas por linha.</p>
+<div class="deskfit" id="deskfit">
+  <div class="browser" id="browser">
+    <div class="chrome"><i></i><i></i><i></i><div class="addr">🔒 cardtroca.com/profile/7c1e04aa</div></div>
+    <div class="page" id="d">
+      <div class="pscroll">
+        <div class="nav"><span class="brand">CardTroca</span><a href="#">Funcionalidades</a><a href="#">Central de ajuda</a><span class="sp"></span><button class="dl">Baixar o app</button></div>
+        <div class="dmain">
+          <div class="dleft"><button class="circle share"><span class="ms">ios_share</span></button><div data-slot="header"></div></div>
+          <div class="dright" data-slot="list"></div>
+        </div>
+        <div class="foot"><span>© 2026 CardTroca</span><span>Termos de uso · Política de privacidade</span></div>
+      </div>
+      <div class="toast">Anúncio abre em cardtroca.com/card/…</div>
+      <div class="modalbg"></div>
+      <div class="modal">
+        <button class="circle x"><span class="ms">close</span></button>
+        <div data-slot="dl"></div>
+        <div class="qrbox"><svg class="qr" id="qr" viewBox="0 0 29 29" shape-rendering="crispEdges"></svg><p><b>Aponte a câmera do celular</b><br>para baixar o app e abrir este perfil</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="note">
+  <b>Igual ao app (sem medalha):</b> avatar de 92 com aro branco, nome, selo do plano, cidade, bio, botão Seguir verde-escuro, card de números (avaliação, comentários, seguidores, trocas). A medalha de negociante fica de fora enquanto não estiver liberada para todos. Abas “À venda · N” e “Coleção · N” com a pílula deslizante, contagem + Filtrar e grade de 3 colunas.
+  <b>Só na web:</b> faixa “Baixar” no topo, janela de download e QR code no computador. No computador não há botão Voltar.
+  Comentários e seguidores abrem o download (a lista fica no app). Perfil sem avaliações mostra “—” e “Sem avaliações”, como no app.
+</div>
+
+<!-- ======== templates ======== -->
+<template id="tpl-header">
+  <div class="header">
+    <div class="pavatar"><div>L</div></div>
+    <div class="pname">Lucas Pacheco</div>
+    <div class="meta" style="margin-top:6px"><span class="planpill"><span class="ms">star</span>Pro</span><span class="place"><span class="ms">location_on</span>Curitiba, PR</span></div>
+    <div class="bio">Colecionador desde 1999. Foco em Base Set e Eeveelutions. Troco em mãos no centro de Curitiba.</div>
+    <div class="followrow"><button class="followbtn dl"><span class="ms">person_add</span>Seguir</button></div>
+    <div class="stats" style="margin-top:16px">
+      <div class="stat"><b><span class="ms">star</span>4,9</b><span>avaliação</span></div><div class="vsep"></div>
+      <div class="stat dl" style="cursor:pointer"><b>37</b><span style="color:var(--primary);font-weight:500">comentários</span></div><div class="vsep"></div>
+      <div class="stat dl" style="cursor:pointer"><b>128</b><span style="color:var(--primary);font-weight:500">seguidores</span></div><div class="vsep"></div>
+      <div class="stat"><b>8</b><span>trocas</span></div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-list">
+  <div class="tabs"><div class="seg" data-tab="0"><div class="thumb"></div><button class="on" data-i="0">À venda · 9</button><button data-i="1">Coleção · 214</button></div></div>
+  <div class="countrow"><span class="cnt">9 cartas</span><button class="filter dl"><span class="ms">tune</span>Filtrar</button></div>
+  <div class="grid"></div>
+</template>
+
+<template id="tpl-dl">
+  <div class="dl-head"><div class="dl-av">L</div>
+    <div><div class="dl-title">Siga Lucas no app do CardTroca</div><div class="t2" style="margin-top:2px">É grátis. Este perfil abre direto no app.</div></div></div>
+  <ul class="feats">
+    <li><div class="iconbox"><span class="ms">notifications</span></div><div><div class="t1">Notificações</div><div class="t2">Aviso quando Lucas anunciar uma carta nova</div></div></li>
+    <li><div class="iconbox"><span class="ms">chat_bubble_outline</span></div><div><div class="t1">Chat com o vendedor</div><div class="t2">Combine preço, troca e entrega</div></div></li>
+    <li><div class="iconbox"><span class="ms">bar_chart</span></div><div><div class="t1">Histórico de preço</div><div class="t2">CardTroca, Liga Pokémon, TCGplayer e eBay</div></div></li>
+    <li><div class="iconbox"><span class="ms">more_horiz</span></div><div><div class="t1">E mais</div><div class="t2">Filtros, troca, pagamento protegido, sua coleção</div></div></li>
+  </ul>
+  <div class="stores">
+    <a class="store"><svg viewBox="0 0 24 24"><path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.7-3.19-1.72-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.75 2.2 1.1-.04 1.52-.71 2.85-.71s1.7.71 2.87.69c1.18-.02 1.93-1.08 2.66-2.14.84-1.23 1.18-2.42 1.2-2.48-.03-.01-2.3-.88-2.3-3.55zM14.18 6.13c.61-.74 1.02-1.76.91-2.78-.88.04-1.94.58-2.57 1.32-.56.65-1.06 1.7-.92 2.7.98.08 1.97-.5 2.58-1.24z"/></svg><div><small>Baixar na</small><b>App Store</b></div></a>
+    <a class="store"><svg viewBox="0 0 24 24"><path d="M3.6 2.2c-.2.2-.3.6-.3 1v17.6c0 .4.1.8.3 1l.1.1 9.9-9.9v-.2L3.7 2.1l-.1.1zm13.3 13.2-3.3-3.3v-.2l3.3-3.3.1.1 3.9 2.2c1.1.6 1.1 1.7 0 2.3l-3.9 2.2h-.1zm-.1.1L13.4 12l-9.8 9.8c.4.4 1 .4 1.7.1l11.5-6.4M16.8 8.5 5.3 2c-.7-.4-1.3-.3-1.7.1l9.8 9.9 3.4-3.5z"/></svg><div><small>Disponível no</small><b>Google Play</b></div></a>
+  </div>
+  <a class="already">Já tenho o app · Abrir</a>
+</template>
+
+<script>
+  const IMG = ['swsh7-215','base1-2','base1-10','sv3pt5-6','base1-15','sm12-194','swsh12-138','base1-4'];
+  const forSale = [
+    ['swsh7-215','Umbreon VMAX','R$ 2.890,00','Evolving Skies','EN'],
+    ['base1-2','Blastoise','R$ 690,00','Base Set','BR'],
+    ['base1-10','Mewtwo','R$ 420,00','Base Set','BR'],
+    ['sv3pt5-6','Charizard ex','R$ 310,00','151','EN'],
+    ['base1-15','Venusaur','R$ 380,00','Base Set','BR'],
+    ['sm12-194','Mewtwo & Mew GX','R$ 1.150,00','Cosmic Eclipse','EN'],
+    ['swsh12-138','Lugia V','R$ 240,00','Silver Tempest','EN'],
+    ['base1-4','Charizard','R$ 4.200,00','Base Set','BR'],
+    ['base1-2','Blastoise','R$ 650,00','Base Set','EN'],
+  ];
+  const collection = Array.from({length: 18}, (_, i) => {
+    const r = forSale[(i*5) % forSale.length]; return [r[0], r[1], '', r[3], r[4]];
+  });
+  const src = f => 'img/' + f + '.png';
+  const clone = id => document.getElementById(id).content.cloneNode(true);
+
+  function tiles(grid, rows, isColl){
+    grid.innerHTML = rows.map(([img,n,p,c,l]) => `
+      <div class="tile${isColl?' coll':''}">
+        <div class="timg"><img src="${src(img)}" loading="lazy"><span class="lang">${l}</span>${isColl?'':'<span class="eye dl"><span class="ms">visibility</span></span>'}</div>
+        <div class="tn">${n}</div><div class="tp">${p}</div><div class="tc">${c}</div>
+      </div>`).join('');
+  }
+
+  [document.getElementById('m'), document.getElementById('d')].forEach(root => {
+    root.querySelector('[data-slot=header]').appendChild(clone('tpl-header'));
+    root.querySelector('[data-slot=list]').appendChild(clone('tpl-list'));
+    root.querySelector('[data-slot=dl]').appendChild(clone('tpl-dl'));
+    if (root.id === 'd') root.querySelector('.modal .already').remove();
+    const grid = root.querySelector('.grid'), seg = root.querySelector('.seg'), cnt = root.querySelector('.cnt'), filt = root.querySelector('.filter');
+    const show = i => {
+      seg.dataset.tab = i;
+      seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.i === i));
+      const rows = i ? collection : forSale;
+      tiles(grid, rows, !!i);
+      cnt.textContent = i ? '214 cartas' : '9 cartas';
+      filt.style.visibility = i ? 'hidden' : 'visible';
+      bindDl(grid);
+    };
+    seg.querySelectorAll('button').forEach(b => b.addEventListener('click', () => show(+b.dataset.i)));
+    const toast = root.querySelector('.toast');
+    grid.addEventListener('click', e => {
+      if (e.target.closest('.dl')) return;
+      if (e.target.closest('.tile') && seg.dataset.tab === '0') { toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 1600); }
+      else if (e.target.closest('.tile')) root.classList.add('open');
+    });
+    function bindDl(scope){ scope.querySelectorAll('.dl').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); root.classList.add('open'); })); }
+    bindDl(root.querySelector('[data-slot=header]')); bindDl(root.querySelector('.countrow'));
+    root.querySelectorAll(':scope > .smart .dl, .nav .dl').forEach(b => b.addEventListener('click', () => root.classList.add('open')));
+    root.querySelectorAll('.sheetbg, .modalbg, .x, .already').forEach(b => b.addEventListener('click', () => root.classList.remove('open')));
+    show(0);
+  });
+
+  (function(){
+    const qr = document.getElementById('qr'); let s = '', seed = 11;
+    const rnd = () => (seed = (seed*9301+49297)%233280)/233280;
+    const finder = (x,y) => { s += `<rect x="${x}" y="${y}" width="7" height="7" fill="#11161D"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="#fff"/><rect x="${x+2}" y="${y+2}" width="3" height="3" fill="#11161D"/>`; };
+    for (let y=0;y<29;y++) for (let x=0;x<29;x++){
+      const inF = (x<8&&y<8)||(x>20&&y<8)||(x<8&&y>20);
+      if(!inF && rnd()>.52) s += `<rect x="${x}" y="${y}" width="1" height="1" fill="#11161D"/>`;
+    }
+    finder(0,0); finder(22,0); finder(0,22);
+    s += `<rect x="11.5" y="11.5" width="6" height="6" rx="1.4" fill="#029779"/>`;
+    qr.innerHTML = s;
+  })();
+
+  function fit(){
+    const box = document.getElementById('deskfit'), b = document.getElementById('browser');
+    const k = Math.min(1, box.clientWidth/1180); b.style.transform = `scale(${k})`;
+    box.style.height = (b.offsetHeight*k) + 'px';
+  }
+  addEventListener('resize', fit); fit();
+</script>
+</body>
+</html>

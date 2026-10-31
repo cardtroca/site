@@ -3,7 +3,8 @@ import { LegalPage } from "@/components/LegalPage";
 
 export const metadata: Metadata = {
   title: "Política de Privacidade | CardTroca",
-  description: "Política de Privacidade do CardTroca.",
+  description: "Como o CardTroca coleta, usa e protege seus dados, e como exercer seus direitos pela LGPD.",
+  alternates: { canonical: "/politica-de-privacidade" },
 };
 
 const sections = [

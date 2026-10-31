@@ -10,12 +10,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: "Perfil | CardTroca",
     description: "Veja o perfil deste colecionador no CardTroca — marketplace de cartas Pokémon TCG.",
+    robots: { index: false, follow: true },
     openGraph: {
       title: "CardTroca — Perfil de colecionador",
       description: "Troque, compre e anuncie cartas Pokémon TCG com pessoas próximas.",
       url: `https://cardtroca.com/profile/${userId}`,
       siteName: "CardTroca",
-      images: [{ url: "https://cardtroca.com/og-image.png", width: 1200, height: 630 }],
     },
   };
 }

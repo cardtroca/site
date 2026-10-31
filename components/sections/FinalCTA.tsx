@@ -3,8 +3,8 @@
 import { useRef } from "react";
 import { motion, useInView, useReducedMotion } from "framer-motion";
 import { AppStoreBadgeButton } from "@/components/AppStoreBadgeButton";
-import { FlaskConical, UserPlus } from "lucide-react";
-import Link from "next/link";
+import { openAppStore } from "@/components/AppDownloadButton";
+import { Download, Sparkles } from "lucide-react";
 
 export function FinalCTA() {
   const ref = useRef<HTMLDivElement>(null);
@@ -14,7 +14,7 @@ export function FinalCTA() {
   return (
     <section
       id="download"
-      aria-label="Acompanhar o CardTroca"
+      aria-label="Baixar o CardTroca"
       className="relative overflow-hidden"
     >
       {/* Background */}
@@ -73,7 +73,7 @@ export function FinalCTA() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/15 border border-white/20 backdrop-blur-sm mb-8"
           >
             <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
-            <span className="text-white/90 text-sm font-medium">Em breve nas lojas</span>
+            <span className="text-white/90 text-sm font-medium">Disponível para colecionadores</span>
           </motion.div>
 
           {/* Heading */}
@@ -83,14 +83,14 @@ export function FinalCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            Comece a organizar suas negociações{" "}
+            Leve sua coleção{" "}
             <span
               className="text-transparent"
               style={{
                 WebkitTextStroke: "2px rgba(255,255,255,0.5)",
               }}
             >
-              de TCG.
+              mais longe.
             </span>
           </motion.h2>
 
@@ -101,7 +101,7 @@ export function FinalCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.2, duration: 0.6 }}
           >
-            Uma plataforma aberta para TCGs, preparada neste momento para cartas Pokémon TCG.
+            Encontre cartas, acompanhe sua coleção e negocie Pokémon TCG com pessoas da sua região.
           </motion.p>
 
           {/* CTAs */}
@@ -111,20 +111,22 @@ export function FinalCTA() {
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            <Link
-              href="/beta"
+            <a
+              href="#recursos"
               className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-base font-bold text-primary bg-white shadow-elevation-4 hover:shadow-elevation-3 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-              aria-label="Participar do Beta do CardTroca"
+              aria-label="Conhecer os recursos do CardTroca"
             >
-              <FlaskConical className="w-5 h-5" />
-              Participe do Beta
-            </Link>
-            <button
-              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-base font-bold text-white bg-white/10 border border-white/20 backdrop-blur-sm hover:bg-white/15 active:scale-[0.98] transition-all duration-200"
-              aria-label="Conhecer o CardTroca"
-            >
-              <UserPlus className="w-5 h-5" />
+              <Sparkles className="w-5 h-5" />
               Conhecer recursos
+            </a>
+            <button
+              type="button"
+              onClick={openAppStore}
+              className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full text-base font-bold text-white bg-white/10 border border-white/20 backdrop-blur-sm hover:bg-white/15 active:scale-[0.98] transition-all duration-200"
+              aria-label="Baixar o CardTroca"
+            >
+              <Download className="w-5 h-5" />
+              Baixar o app
             </button>
           </motion.div>
 

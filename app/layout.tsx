@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
-import { Suspense } from "react";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AmplitudeProvider } from "@/components/AmplitudeProvider";
 import { CookieConsentBanner } from "@/components/CookieConsent";
+import { SiteJsonLd } from "@/components/seo/JsonLd";
+import { APP_STORE_ID, SITE_URL } from "@/lib/site";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -13,50 +14,54 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "CardTroca — Troque, compre e anuncie cartas TCG",
+  title: "CardTroca — Colecione, encontre e negocie cartas Pokémon TCG",
   description:
-    "A plataforma definitiva para colecionadores TCG. Busca por localização, anúncios, lista de desejos, modo troca e chat. Preparada neste momento para cartas Pokémon TCG.",
+    "Organize sua coleção, encontre cartas próximas, acompanhe preços e negocie Pokémon TCG. Scanner, anúncios, lista de desejos, match e chat no mesmo app.",
   keywords: [
     "troca de cartas",
     "cartas TCG",
     "TCG",
     "match de cartas",
     "compra venda cartas TCG",
+    "coleção Pokémon TCG",
+    "scanner de cartas Pokémon",
+    "preço de cartas Pokémon",
     "colecionadores",
     "CardTroca",
   ],
+  metadataBase: new URL(SITE_URL),
+  applicationName: "CardTroca",
+  category: "shopping",
   authors: [{ name: "CardTroca" }],
   creator: "CardTroca",
   publisher: "CardTroca",
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
   icons: {
     icon: "/splash_logo.png",
     apple: "/splash_logo.png",
   },
+  // og:image e twitter:image vêm de app/opengraph-image.tsx e app/twitter-image.tsx
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    url: "https://cardtroca.app",
-    title: "CardTroca — Troque, compre e anuncie cartas TCG",
+    url: "/",
+    title: "CardTroca — Sua coleção Pokémon TCG em movimento",
     description:
-      "Negociações de TCG com localização, anúncios, lista de desejos, modo troca e chat.",
+      "Organize, encontre e negocie cartas Pokémon TCG com scanner, catálogo, preços, anúncios e chat.",
     siteName: "CardTroca",
-    images: [
-      {
-        url: "https://cardtroca.app/splash_logo.png",
-        width: 1024,
-        height: 1024,
-        alt: "CardTroca",
-      },
-    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "CardTroca — Troque, compre e anuncie cartas TCG",
+    title: "CardTroca — Sua coleção Pokémon TCG em movimento",
     description:
-      "Negociações de TCG com localização, anúncios, lista de desejos, modo troca e chat.",
-    images: ["https://cardtroca.app/splash_logo.png"],
+      "Scanner, coleção, preços, anúncios e chat para colecionadores Pokémon TCG.",
   },
+  // Smart App Banner do Safari no iPhone
+  other: { "apple-itunes-app": `app-id=${APP_STORE_ID}` },
 };
 
 export const viewport: Viewport = {
@@ -91,14 +96,13 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased bg-ds-bg text-ds-text-primary">
-        <Suspense>
-          <AmplitudeProvider>
-            <ThemeProvider>
-              {children}
-              <CookieConsentBanner />
-            </ThemeProvider>
-          </AmplitudeProvider>
-        </Suspense>
+        <SiteJsonLd />
+        <AmplitudeProvider>
+          <ThemeProvider>
+            {children}
+            <CookieConsentBanner />
+          </ThemeProvider>
+        </AmplitudeProvider>
       </body>
     </html>
   );

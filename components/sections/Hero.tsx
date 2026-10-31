@@ -15,7 +15,7 @@ function HeroAppScreen() {
     <div className="relative h-full w-full">
       <Image
         src="/images/home.webp"
-        alt=""
+        alt="Tela inicial do app CardTroca com valor da coleção, atalhos e anúncios em destaque"
         fill
         priority
         unoptimized

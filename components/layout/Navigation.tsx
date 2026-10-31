@@ -73,13 +73,21 @@ export function Navigation() {
               className="flex items-center gap-2.5 flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg"
               aria-label="CardTroca — Início"
             >
+              {/* logo atual do app: verde+escuro no tema claro, verde+branco no escuro */}
               <Image
-                src="/logo-vertical-1.svg"
+                src="/brand/wordmark_light.svg"
                 alt="CardTroca"
-                width={120}
-                height={72}
-                className="h-10 w-auto"
-                priority
+                width={142}
+                height={24}
+                className="h-6 w-auto dark:hidden"
+                unoptimized
+              />
+              <Image
+                src="/brand/wordmark_dark.svg"
+                alt="CardTroca"
+                width={142}
+                height={24}
+                className="hidden h-6 w-auto dark:block"
                 unoptimized
               />
             </a>

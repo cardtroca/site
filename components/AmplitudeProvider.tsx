@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import * as amplitude from "@amplitude/analytics-browser";
 import {
@@ -13,9 +13,23 @@ const API_KEY = process.env.NEXT_PUBLIC_AMPLITUDE_API_KEY ?? "";
 
 let initialized = false;
 
-export function AmplitudeProvider({ children }: { children: React.ReactNode }) {
+// useSearchParams fica isolado aqui dentro do próprio Suspense: se envolvesse a
+// árvore toda, o Next renderizaria a página só no cliente e o HTML iria vazio
+// para o Google.
+function PageViewTracker({ consent }: { consent: CookieConsent | null }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (!API_KEY || consent !== "accepted") return;
+    const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
+    amplitude.track("Page Viewed", { url, path: pathname });
+  }, [consent, pathname, searchParams]);
+
+  return null;
+}
+
+export function AmplitudeProvider({ children }: { children: React.ReactNode }) {
   const [consent, setConsent] = useState<CookieConsent | null>(null);
 
   useEffect(() => {
@@ -53,13 +67,14 @@ export function AmplitudeProvider({ children }: { children: React.ReactNode }) {
     amplitude.setOptOut(false);
   }, [consent]);
 
-  useEffect(() => {
-    if (!API_KEY || consent !== "accepted") return;
-    const url = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
-    amplitude.track("Page Viewed", { url, path: pathname });
-  }, [consent, pathname, searchParams]);
-
-  return <>{children}</>;
+  return (
+    <>
+      <Suspense fallback={null}>
+        <PageViewTracker consent={consent} />
+      </Suspense>
+      {children}
+    </>
+  );
 }
 
 export function track(event: string, properties?: Record<string, unknown>) {

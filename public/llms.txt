@@ -1,0 +1,36 @@
+# CardTroca
+
+> CardTroca é um app gratuito (iOS e Android) para colecionadores de TCG no Brasil organizarem a coleção, acompanharem o valor das cartas e comprarem, venderem e trocarem cartas com colecionadores próximos. Hoje está preparado para Pokémon TCG; Magic: The Gathering está em breve.
+
+O app reúne em um só lugar o que colecionadores costumam fazer espalhado entre grupos de chat, redes sociais e planilhas: catálogo de cartas, coleção com valor estimado, anúncios, busca por distância, modo troca com match, chat e reputação.
+
+## Funcionalidades
+
+- Coleção: cadastre suas cartas e veja o valor estimado da coleção inteira, com análises.
+- Sets: progresso por set, mostrando quais cartas faltam para completar.
+- Busca: catálogo por nome ou código da carta e cartas à venda com filtros de distância, condição, preço e avaliação.
+- Lista de desejos: salve as cartas que você procura.
+- Por perto: anúncios ordenados por distância (localização aproximada ou cidade cadastrada), com mapa.
+- Modo troca: escolha o que quer receber e o que oferece; quando os dois lados demonstram interesse, acontece o match.
+- Chat: negocie, envie fotos e combine o encontro.
+- Compra e venda: anúncios, checkout com opções de entrega do vendedor e painel de vendas.
+- Reputação: avaliações depois de cada negociação, denúncia e bloqueio no chat.
+- Planos: modo Créditos (créditos não expiram) e assinatura Pro.
+
+## Segurança
+
+Para trocas presenciais o CardTroca recomenda locais públicos e movimentados, como lojas e eventos de TCG, e conferir carta, estado, idioma, preço e reputação antes de fechar negócio.
+
+## Links
+
+- [Site](https://cardtroca.com)
+- [Funcionalidades](https://cardtroca.com/funcionalidades)
+- [Central de Ajuda (perguntas frequentes)](https://cardtroca.com/central-de-ajuda)
+- [App Store](https://apps.apple.com/br/app/cardtroca/id6779094214)
+- [Google Play](https://play.google.com/store/apps/details?id=io.cardtroca)
+- [Termos de Uso](https://cardtroca.com/termos-de-uso)
+- [Política de Privacidade](https://cardtroca.com/politica-de-privacidade)
+
+## Contato
+
+contato@cardtroca.com

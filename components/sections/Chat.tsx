@@ -34,7 +34,7 @@ export function Chat() {
               <div className="relative h-full w-full">
                 <Image
                   src="/images/avaliacao.webp"
-                  alt=""
+                  alt="Avaliação do colecionador após a negociação no CardTroca"
                   fill
                   unoptimized
                   sizes="300px"

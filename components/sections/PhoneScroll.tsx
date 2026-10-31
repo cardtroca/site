@@ -19,7 +19,7 @@ function FeedScreen() {
     <div className="relative h-full w-full">
       <Image
         src="/images/proximas.webp"
-        alt=""
+        alt="Cartas à venda perto de você no CardTroca"
         fill
         unoptimized
         sizes="300px"
@@ -35,7 +35,7 @@ function MapScreen() {
     <div className="relative h-full w-full">
       <Image
         src="/images/localizacao.webp"
-        alt=""
+        alt="Filtro de distância e localização no CardTroca"
         fill
         unoptimized
         sizes="300px"
@@ -51,7 +51,7 @@ function TradeSetupScreen() {
     <div className="relative h-full w-full">
       <Image
         src="/images/troca1.webp"
-        alt=""
+        alt="Configuração de troca no CardTroca: carta oferecida e carta desejada"
         fill
         unoptimized
         sizes="300px"
@@ -67,7 +67,7 @@ function TradeSwipeScreen() {
     <div className="relative h-full w-full">
       <Image
         src="/images/swipe.webp"
-        alt=""
+        alt="Modo troca do CardTroca: deslize a carta para propor uma troca"
         fill
         unoptimized
         sizes="300px"
@@ -83,7 +83,7 @@ function ChatScreen() {
     <div className="relative h-full w-full">
       <Image
         src="/images/chat2.webp"
-        alt=""
+        alt="Chat de negociação entre colecionadores no CardTroca"
         fill
         unoptimized
         sizes="300px"

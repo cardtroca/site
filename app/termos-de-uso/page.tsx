@@ -3,7 +3,8 @@ import { LegalPage } from "@/components/LegalPage";
 
 export const metadata: Metadata = {
   title: "Termos de Uso | CardTroca",
-  description: "Termos de Uso do CardTroca.",
+  description: "Termos de Uso do CardTroca, app para comprar, vender e trocar cartas TCG entre colecionadores.",
+  alternates: { canonical: "/termos-de-uso" },
 };
 
 const sections = [

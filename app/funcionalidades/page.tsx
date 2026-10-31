@@ -9,6 +9,7 @@ import { Geolocation } from "@/components/sections/Geolocation";
 import { Search } from "@/components/sections/Search";
 import { Wishlist } from "@/components/sections/Wishlist";
 import { Chat } from "@/components/sections/Chat";
+import { FeatureCatalog } from "@/components/sections/FeatureCatalog";
 import { cn } from "@/lib/utils";
 
 const features = [
@@ -124,6 +125,8 @@ export default function FuncionalidadesPage() {
             })}
           </div>
         </div>
+
+        <FeatureCatalog />
 
       </main>
       <Footer />

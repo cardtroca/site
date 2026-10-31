@@ -4,6 +4,7 @@ import { LegalPage } from "@/components/LegalPage";
 export const metadata: Metadata = {
   title: "Exclusão de Conta | CardTroca",
   description: "Saiba como solicitar a exclusão da sua conta e dados no CardTroca.",
+  alternates: { canonical: "/exclusao-de-conta" },
 };
 
 const sections = [

@@ -46,7 +46,7 @@ export function Wishlist() {
               <div className="relative h-full w-full">
                 <Image
                   src="/images/desejos.webp"
-                  alt=""
+                  alt="Lista de desejos do CardTroca com cartas Pokémon salvas"
                   fill
                   unoptimized
                   sizes="300px"

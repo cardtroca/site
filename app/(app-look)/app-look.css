@@ -1,0 +1,118 @@
+/* Visual do app (tokens de lib/core/theme/app_theme.dart). Sempre claro. */
+.app-look {
+  color-scheme: light;
+  --bg: #F5F6F6; --surface: #FFFFFF; --surface-var: #EEF0F0;
+  --primary: #029779; --primary-light: #E6FAF4; --primary-dark: #104E4B;
+  --text: #11161D; --text-2: #586572; --text-3: #8A95A2; --border: #E3E6E6;
+  --warn: #D98E04; --success: #0E9F6E; --error: #E5484D; --rare: #2563EB;
+  --shadow-soft: 0 8px 24px -8px rgba(0, 0, 0, .06);
+  --shadow-subtle: 0 1px 2px rgba(0, 0, 0, .06);
+
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-poppins), Poppins, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.app-look *, .app-look *::before, .app-look *::after { box-sizing: border-box; }
+
+.app-look .app-card {
+  background: var(--surface);
+  border-radius: 22px;
+  box-shadow: var(--shadow-soft);
+}
+
+.app-look .ms {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  display: inline-block;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  user-select: none;
+}
+
+/* Botão redondo (.circle) */
+.app-look .circle {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--surface); box-shadow: var(--shadow-subtle);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text); cursor: pointer; border: none; padding: 0;
+}
+.app-look .circle .ms { font-size: 21px; }
+
+/* Faixa "Baixar" */
+.app-look .smart {
+  position: sticky; top: 0; z-index: 26;
+  background: rgba(245, 246, 246, .96);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border-bottom: .5px solid var(--border);
+  padding: 8px 12px; display: flex; align-items: center; gap: 10px;
+}
+.app-look .smart .applogo {
+  width: 36px; height: 36px; border-radius: 10px; background: var(--primary); color: #fff;
+  display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-subtle); flex: none;
+}
+.app-look .smart .applogo .ms { font-size: 20px; }
+.app-look .smart .a { font-size: 13px; font-weight: 600; line-height: 1.3; }
+.app-look .smart .b { font-size: 11px; color: var(--text-2); line-height: 1.3; }
+.app-look .smart button.dl {
+  margin-left: auto; background: var(--primary); color: #fff; border: none; border-radius: 999px;
+  font: 600 12.5px var(--font-poppins), Poppins, sans-serif; padding: 7px 16px; cursor: pointer;
+}
+
+/* Carta com tilt */
+.app-look .stage {
+  background: radial-gradient(90% 90% at 50% 45%, #FFFFFF, #F5F6F6);
+  position: relative; display: flex; justify-content: center;
+}
+.app-look .tiltwrap { perspective: 900px; display: flex; justify-content: center; }
+.app-look .tcard {
+  position: relative; border-radius: 6px; transform-style: preserve-3d; will-change: transform;
+  box-shadow: 0 18px 32px -10px rgba(0, 0, 0, .28);
+}
+.app-look .shine {
+  position: absolute; inset: 0; border-radius: 6px; pointer-events: none; opacity: .55;
+  background: linear-gradient(115deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.38) 50%, rgba(255,255,255,0) 62%);
+  background-size: 300% 300%;
+}
+.app-look .cardimg { display: block; width: 100%; height: auto; border-radius: 6px; }
+.app-look .cardimg-empty {
+  display: flex; align-items: center; justify-content: center; width: 100%;
+  aspect-ratio: 63 / 88; border-radius: 6px; background: var(--surface-var);
+}
+.app-look .cardimg-empty svg { width: 42%; height: auto; opacity: .35; }
+
+/* ListingGridTile compacto */
+.app-look .tile {
+  display: block; color: inherit; text-decoration: none; min-width: 0;
+  background: var(--surface); border-radius: 16px; box-shadow: var(--shadow-soft);
+  padding: 6px 6px 8px; cursor: pointer; transition: transform .15s;
+}
+.app-look .tile:active { transform: scale(.97); }
+.app-look .tile .timg {
+  position: relative; aspect-ratio: 63 / 88; border-radius: 8px; overflow: hidden; background: var(--surface-var);
+}
+.app-look .tile .timg img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.app-look .tile .timg .cardimg-empty { height: 100%; border-radius: 0; }
+.app-look .tile .lang {
+  position: absolute; left: 4px; top: 4px; background: rgba(255,255,255,.92); border-radius: 999px;
+  padding: 1px 5px; font-size: 10px; font-weight: 600; color: rgba(0,0,0,.87);
+}
+.app-look .tile .eye {
+  position: absolute; right: 4px; top: 4px; width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; color: var(--text);
+}
+.app-look .tile .eye .ms { font-size: 14px; }
+.app-look .tile .tn, .app-look .tile .tc { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-look .tile .tn { font-size: 12px; font-weight: 500; margin-top: 6px; }
+.app-look .tile .tp { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.app-look .tile .tc { font-size: 11px; color: var(--text-2); }
+
+/* Aviso "Link copiado" */
+.app-look .toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+  background: var(--text); color: #fff; font-size: 12.5px; font-weight: 500;
+  padding: 8px 16px; border-radius: 999px; z-index: 60;
+}

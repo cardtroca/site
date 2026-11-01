@@ -126,6 +126,7 @@ export function AppGateProvider({
           >
             {isMobile ? (
               <>
+                <div className="gate-x"><CircleButton icon="close" label="Fechar" onClick={close} /></div>
                 <div
                   className="grab-area"
                   onPointerDown={onDragStart}

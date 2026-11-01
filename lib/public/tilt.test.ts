@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { clamp, idleSway, initialTilt, pointerTilt, stepTilt, tiltStyle } from "./tilt";
+import { clamp, idleSway, initialTilt, isStillTap, pointerTilt, stepTilt, tiltStyle } from "./tilt";
 
 describe("tilt", () => {
   it("clamp limita ao intervalo", () => {
@@ -34,5 +34,13 @@ describe("tilt", () => {
   it("balanço e estilo", () => {
     expect(idleSway(0)).toEqual([0, 0.3]);
     expect(tiltStyle(1, 0).transform).toBe("rotateX(0deg) rotateY(8deg)");
+  });
+});
+
+describe("isStillTap", () => {
+  it("toque parado conta; arraste de 10 px ou mais não", () => {
+    expect(isStillTap([100, 100], [104, 103])).toBe(true);
+    expect(isStillTap([100, 100], [110, 100])).toBe(false);
+    expect(isStillTap([100, 100], [160, 102])).toBe(false);
   });
 });

@@ -45,3 +45,8 @@ export function tiltStyle(x: number, y: number) {
     shine: `${50 - x * 60}% ${50 - y * 30}%`,
   };
 }
+
+/** Toque sem arraste (< 10 px entre touchstart e touchend): só ele pede a permissão do giroscópio. */
+export const TAP_SLOP_PX = 10;
+export const isStillTap = (start: [number, number], end: [number, number]) =>
+  Math.hypot(end[0] - start[0], end[1] - start[1]) < TAP_SLOP_PX;

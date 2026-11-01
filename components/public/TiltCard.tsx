@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { CardImage } from "./CardImage";
-import { idleSway, initialTilt, pointerTilt, stepTilt, tiltStyle } from "@/lib/public/tilt";
+import { idleSway, initialTilt, isStillTap, pointerTilt, stepTilt, tiltStyle } from "@/lib/public/tilt";
 
 type IOSOrientation = typeof DeviceOrientationEvent & { requestPermission?: () => Promise<"granted" | "denied"> };
 
@@ -35,12 +35,14 @@ export function TiltCard({
     let lastSensor = 0;
     let raf = 0;
 
-    const onMove = (e: MouseEvent) => {
+    // Só mouse de verdade: o toque emula mousemove e deixaria `hovering` preso, congelando o balanço.
+    const onMove = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") return;
       hovering = true;
       const [x, y] = pointerTilt(e.clientX, e.clientY, card.getBoundingClientRect());
       apply(x, y);
     };
-    const onLeave = () => { hovering = false; };
+    const onLeave = (e: PointerEvent) => { if (e.pointerType === "mouse") hovering = false; };
     const onOrientation = (e: DeviceOrientationEvent) => {
       if (e.gamma == null || e.beta == null) return;
       tilt = stepTilt(tilt, e.gamma, e.beta);
@@ -64,7 +66,8 @@ export function TiltCard({
         const answer = await D.requestPermission();
         if (answer === "granted") listen();
         stage.removeEventListener("click", onTap);
-        stage.removeEventListener("touchend", onTap);
+        stage.removeEventListener("touchstart", onTouchStart);
+        stage.removeEventListener("touchend", onTouchEnd);
       } catch {
         // rejeitado fora de gesto válido: tenta de novo no próximo toque
       } finally {
@@ -72,13 +75,28 @@ export function TiltCard({
       }
     };
 
+    // Só pede em toque parado (< 10 px): o fim de um arraste da galeria não conta.
+    let touchStart: [number, number] | null = null;
+    const onTouchStart = (e: TouchEvent) => {
+      const p = e.touches[0];
+      touchStart = p ? [p.clientX, p.clientY] : null;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      const p = e.changedTouches[0];
+      const start = touchStart;
+      touchStart = null;
+      if (!p || !start || !isStillTap(start, [p.clientX, p.clientY])) return;
+      void onTap();
+    };
+
     const D = window.DeviceOrientationEvent as IOSOrientation | undefined;
     if (D && typeof D.requestPermission !== "function") listen();
 
-    stage.addEventListener("mousemove", onMove);
-    stage.addEventListener("mouseleave", onLeave);
+    stage.addEventListener("pointermove", onMove);
+    stage.addEventListener("pointerleave", onLeave);
     stage.addEventListener("click", onTap);
-    stage.addEventListener("touchend", onTap);
+    stage.addEventListener("touchstart", onTouchStart, { passive: true });
+    stage.addEventListener("touchend", onTouchEnd);
 
     const idle = () => {
       const sensorActive = performance.now() - lastSensor < 600;
@@ -93,10 +111,11 @@ export function TiltCard({
 
     return () => {
       cancelAnimationFrame(raf);
-      stage.removeEventListener("mousemove", onMove);
-      stage.removeEventListener("mouseleave", onLeave);
+      stage.removeEventListener("pointermove", onMove);
+      stage.removeEventListener("pointerleave", onLeave);
       stage.removeEventListener("click", onTap);
-      stage.removeEventListener("touchend", onTap);
+      stage.removeEventListener("touchstart", onTouchStart);
+      stage.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("deviceorientation", onOrientation);
     };
   }, []);

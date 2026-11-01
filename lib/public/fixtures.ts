@@ -53,7 +53,7 @@ const ALL: Row[] = [
   listing(FIXTURE_IDS.listingSold, S, { asking_price: 80, sold_at: "2026-10-10T12:00:00Z" }, card("Mew V", IMG)),
   listing(FIXTURE_IDS.listingCollection, S, { status: "collection", asking_price: null }, card("Gengar VMAX", IMG)),
   listing(FIXTURE_IDS.listingLongName, S, { asking_price: 12 }, card("Pikachu com Chapéu de Festa Edição Comemorativa 25 Anos", IMG)),
-  listing(FIXTURE_IDS.listingBoth, S, { status: "both", asking_price: 220, is_graded: true, grading_company: "PSA", grade_score: 9 }, card("Lugia V", IMG)),
+  listing(FIXTURE_IDS.listingBoth, S, { status: "both", asking_price: 220, is_graded: true, grading_company: "PSA", grade_score: 9, photo_url: "https://images.pokemontcg.io/swsh12/138_hires.png", notes: "Carta direto do booster para o sleeve.\nEnvio com rastreio ou entrega em mãos." }, card("Lugia V", IMG)),
   listing(FIXTURE_IDS.listingOfBanned, FIXTURE_IDS.bannedSeller, { asking_price: 60 }, card("Eevee", IMG)),
   listing(FIXTURE_IDS.listingOfDeleted, FIXTURE_IDS.deletedSeller, { asking_price: 60 }, card("Snorlax", IMG)),
 ];

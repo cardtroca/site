@@ -6,7 +6,14 @@ import { idleSway, initialTilt, pointerTilt, stepTilt, tiltStyle } from "@/lib/p
 
 type IOSOrientation = typeof DeviceOrientationEvent & { requestPermission?: () => Promise<"granted" | "denied"> };
 
-export function TiltCard({ src, alt, width }: { src: string | null; alt: string; width: number }) {
+export function TiltCard({
+  src, alt, width, padding = "16px 0 24px",
+}: {
+  src: string | null; alt: string;
+  /** Número em px ou valor CSS (ex.: "var(--lp-card-w)"). */
+  width: number | string;
+  padding?: string;
+}) {
   const stageRef = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const shineRef = useRef<HTMLDivElement>(null);
@@ -95,7 +102,7 @@ export function TiltCard({ src, alt, width }: { src: string | null; alt: string;
   }, []);
 
   return (
-    <div ref={stageRef} className="stage" style={{ padding: "16px 0 24px" }}>
+    <div ref={stageRef} className="stage" style={{ padding }}>
       <div className="tiltwrap">
         <div ref={cardRef} className="tcard" style={{ width }}>
           <CardImage url={src} alt={alt} />

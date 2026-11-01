@@ -26,11 +26,6 @@ export function AppGateContent({
   inApp: boolean;
   isMobile: boolean;
 }) {
-  const order = storeOrder(platform ?? "desktop");
-  const stores = {
-    apple: { url: APP_STORE_URL, small: "Baixar na", name: "App Store", d: APPLE_PATH },
-    google: { url: PLAY_STORE_URL, small: "Disponível no", name: "Google Play", d: PLAY_PATH },
-  };
   const showAlready = isMobile && (platform === "ios" || platform === "android");
 
   return (
@@ -65,20 +60,7 @@ export function AppGateContent({
           </li>
         ))}
       </ul>
-      <div className="stores">
-        {order.map((s) => (
-          <a
-            key={s}
-            className="store"
-            href={stores[s].url}
-            {...(isMobile ? {} : { target: "_blank", rel: "noopener noreferrer" })}
-            onClick={() => trackPublic("web_store_clicked", { store: s, page: path })}
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d={stores[s].d} /></svg>
-            <div><small>{stores[s].small}</small><b>{stores[s].name}</b></div>
-          </a>
-        ))}
-      </div>
+      <StoreButtons path={path} platform={platform} newTab={!isMobile} />
       {showAlready &&
         (platform === "ios" && inApp ? (
           <div className="already already-hint">Toque em ⋯ e escolha Abrir no navegador</div>
@@ -88,6 +70,39 @@ export function AppGateContent({
           </a>
         ))}
     </>
+  );
+}
+
+/** Botões pretos da App Store e do Google Play, com o sistema detectado primeiro. */
+export function StoreButtons({
+  path,
+  platform,
+  newTab,
+}: {
+  path: string;
+  platform: Platform | null;
+  newTab: boolean;
+}) {
+  const order = storeOrder(platform ?? "desktop");
+  const stores = {
+    apple: { url: APP_STORE_URL, small: "Baixar na", name: "App Store", d: APPLE_PATH },
+    google: { url: PLAY_STORE_URL, small: "Disponível no", name: "Google Play", d: PLAY_PATH },
+  };
+  return (
+    <div className="stores">
+      {order.map((s) => (
+        <a
+          key={s}
+          className="store"
+          href={stores[s].url}
+          {...(newTab ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          onClick={() => trackPublic("web_store_clicked", { store: s, page: path })}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d={stores[s].d} /></svg>
+          <div><small>{stores[s].small}</small><b>{stores[s].name}</b></div>
+        </a>
+      ))}
+    </div>
   );
 }
 

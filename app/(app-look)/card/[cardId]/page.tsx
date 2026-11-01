@@ -18,7 +18,7 @@ import { getListingPage } from "@/lib/public/data";
 import { galleryImages } from "@/lib/public/format";
 import { listingOg } from "@/lib/public/og";
 import { cardSpecRows } from "@/lib/public/specs";
-import { SITE_URL } from "@/lib/site";
+import { APP_STORE_ID, SITE_URL } from "@/lib/site";
 
 export const revalidate = 60;
 
@@ -44,6 +44,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: data.kind === "ok" ? `${og.title} | CardTroca` : "Carta | CardTroca",
     description: og.description,
     robots: { index: false, follow: true },
+    ...(data.kind === "not_found"
+      ? {}
+      : { other: { "apple-itunes-app": `app-id=${APP_STORE_ID}, app-argument=${url}` } }),
     openGraph: { title: og.title, description: og.description, url, siteName: "CardTroca", images },
     twitter: { card: "summary_large_image", title: og.title, description: og.description, images },
   };

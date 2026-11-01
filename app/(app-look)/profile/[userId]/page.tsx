@@ -10,7 +10,7 @@ import { ProfileHeader } from "@/components/public/profile/ProfileHeader";
 import { ProfileTabs } from "@/components/public/profile/ProfileTabs";
 import { getProfilePage } from "@/lib/public/data";
 import { profileOg } from "@/lib/public/og";
-import { SITE_URL } from "@/lib/site";
+import { APP_STORE_ID, SITE_URL } from "@/lib/site";
 
 export const revalidate = 60;
 
@@ -36,6 +36,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: data.kind === "ok" ? `${og.title} | CardTroca` : "Perfil | CardTroca",
     description: og.description,
     robots: { index: false, follow: true },
+    ...(data.kind === "not_found"
+      ? {}
+      : { other: { "apple-itunes-app": `app-id=${APP_STORE_ID}, app-argument=${url}` } }),
     openGraph: { title: og.title, description: og.description, url, siteName: "CardTroca", images },
     twitter: { card: images ? "summary_large_image" : "summary", title: og.title, description: og.description, images },
   };

@@ -26,7 +26,8 @@ const supportLinks = [
   { href: "/termos-de-uso", label: "Termos de Uso" },
 ];
 
-export function Navigation() {
+/** `onDownload`: ação do botão "Baixe o App"; padrão é abrir a loja. */
+export function Navigation({ onDownload = openAppStore }: { onDownload?: () => void } = {}) {
   const { resolvedTheme, setTheme } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -138,7 +139,7 @@ export function Navigation() {
                 variant="primary"
                 size="sm"
                 icon={<Download className="w-4 h-4" />}
-                onClick={openAppStore}
+                onClick={onDownload}
                 className="hidden sm:inline-flex"
               >
                 Baixe o App
@@ -220,7 +221,7 @@ export function Navigation() {
                   size="md"
                   fullWidth
                   icon={<Download className="w-4 h-4" />}
-                  onClick={() => { setMobileOpen(false); openAppStore(); }}
+                  onClick={() => { setMobileOpen(false); onDownload(); }}
                 >
                   Baixe o App
                 </Button>

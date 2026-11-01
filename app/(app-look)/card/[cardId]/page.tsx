@@ -4,6 +4,7 @@ import { cache } from "react";
 import { Navigation } from "@/components/layout/Navigation";
 import { AppGateProvider } from "@/components/public/AppGate";
 import { GatedAppBanner } from "@/components/public/GatedAppBanner";
+import { GatedNavigation } from "@/components/public/GatedNavigation";
 import { CardSpecs } from "@/components/public/listing/CardSpecs";
 import { FloatingCta } from "@/components/public/listing/FloatingCta";
 import { Gallery } from "@/components/public/listing/Gallery";
@@ -21,6 +22,11 @@ import { cardSpecRows } from "@/lib/public/specs";
 import { SITE_URL } from "@/lib/site";
 
 export const revalidate = 60;
+
+// Lista vazia: nada é gerado no build, e cada anúncio vira ISR na primeira visita.
+export function generateStaticParams() {
+  return [];
+}
 
 interface Props {
   params: Promise<{ cardId: string }>;
@@ -44,10 +50,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function DesktopNav() {
+/** `gated`: o "Baixe o App" abre a janela (origem "nav"); sem ela, abre a loja. */
+function DesktopNav({ gated = false }: { gated?: boolean }) {
   return (
     <div className="lp-nav">
-      <Navigation />
+      {gated ? <GatedNavigation /> : <Navigation />}
     </div>
   );
 }
@@ -92,7 +99,7 @@ export default async function CardPage({ params }: Props) {
   return (
     <AppGateProvider subject={{ kind: "listing", imageUrl: images[0]?.url ?? null }} path={path}>
       <ViewTracker event="web_listing_viewed" props={{ listing_id: listing.id, available: "true" }} />
-      <DesktopNav />
+      <DesktopNav gated />
       <GatedAppBanner />
       <main className="lp">
         <div className="lp-main">

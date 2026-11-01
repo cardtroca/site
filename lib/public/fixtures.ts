@@ -14,6 +14,7 @@ export const FIXTURE_IDS = {
   listingNoImage: "aaaaaaaa-0000-4000-8000-000000000004",
   listingSold: "aaaaaaaa-0000-4000-8000-000000000005",
   listingCollection: "aaaaaaaa-0000-4000-8000-000000000006",
+  listingCollection2: "aaaaaaaa-0000-4000-8000-000000000009",
   listingLongName: "aaaaaaaa-0000-4000-8000-000000000007",
   listingBoth: "aaaaaaaa-0000-4000-8000-000000000008",
   listingOfBanned: "bbbbbbbb-0000-4000-8000-000000000001",
@@ -65,6 +66,7 @@ const ALL: Row[] = [
   listing(FIXTURE_IDS.listingNoImage, S, { asking_price: 35 }, card("Pikachu", null)),
   listing(FIXTURE_IDS.listingSold, S, { asking_price: 80, sold_at: "2026-10-10T12:00:00Z" }, card("Mew V", IMG)),
   listing(FIXTURE_IDS.listingCollection, S, { status: "collection", asking_price: null }, card("Gengar VMAX", IMG)),
+  listing(FIXTURE_IDS.listingCollection2, S, { status: "collection", asking_price: null }, card("Mewtwo", "https://images.pokemontcg.io/base1/10_hires.png", { set_name: "Base Set" })),
   listing(FIXTURE_IDS.listingLongName, S, { asking_price: 12 }, card("Pikachu com Chapéu de Festa Edição Comemorativa 25 Anos", IMG)),
   listing(FIXTURE_IDS.listingBoth, S, { status: "both", asking_price: 220, is_graded: true, grading_company: "PSA", grade_score: 9, photo_url: "https://images.pokemontcg.io/swsh12/138_hires.png", notes: "Carta direto do booster para o sleeve.\nEnvio com rastreio ou entrega em mãos." }, card("Lugia V", IMG)),
   listing(FIXTURE_IDS.listingOfBanned, FIXTURE_IDS.bannedSeller, { asking_price: 60 }, card("Eevee", IMG)),
@@ -72,6 +74,21 @@ const ALL: Row[] = [
   listing("dddddddd-0000-4000-8000-000000000002", FIXTURE_IDS.longBioSeller, { status: "collection", asking_price: null }, card("Blastoise", "https://images.pokemontcg.io/base1/2_hires.png", { set_name: "Base Set" })),
   listing(FIXTURE_IDS.listingOfDeleted, FIXTURE_IDS.deletedSeller, { asking_price: 60 }, card("Snorlax", IMG)),
 ];
+
+/** Preço de mercado (só para ordenar as abas do perfil, como o app); a coleção fica fora da ordem de inserção. */
+const MARKET: Record<string, number> = {
+  [FIXTURE_IDS.listingCollection]: 120,
+  [FIXTURE_IDS.listingCollection2]: 640,
+};
+
+const byAskingDesc = (a: Row, b: Row): number => {
+  const pa = typeof a.asking_price === "number" ? a.asking_price : null;
+  const pb = typeof b.asking_price === "number" ? b.asking_price : null;
+  if (pa == null || pb == null) return pa == null ? (pb == null ? 0 : 1) : -1;
+  return pb - pa;
+};
+
+const isForSale = (r: Row) => (r.status === "sale" || r.status === "both") && r.sold_at == null;
 
 const sellers: Record<string, Row> = {
   [FIXTURE_IDS.seller]: SELLER,
@@ -90,7 +107,15 @@ export const fixtureSource: PublicSource = {
   async sellerRow(userId) {
     return sellers[userId] ?? null;
   },
-  async sellerListingRows(userId) {
-    return ALL.filter((r) => r.user_id === userId);
+  async moreFromSeller(userId, excludeId, limit) {
+    return ALL.filter((r) => r.user_id === userId && isForSale(r) && r.id !== excludeId)
+      .sort(byAskingDesc)
+      .slice(0, limit);
+  },
+  async profileTab(userId, tab, limit) {
+    const all = ALL.filter((r) => r.user_id === userId && (tab === "forSale" ? isForSale(r) : r.status === "collection"))
+      .sort(byAskingDesc)
+      .map((r) => ({ ...r, cards: { ...(r.cards as Row), market_price_brl: MARKET[r.id as string] ?? null } }));
+    return { rows: all.slice(0, limit), total: all.length };
   },
 };

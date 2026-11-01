@@ -13,24 +13,20 @@ function isInvalidId(e: unknown): boolean {
   return typeof e === "object" && e != null && (e as { code?: unknown }).code === "22P02";
 }
 
-const isForSale = (r: Row) => (r.status === "sale" || r.status === "both") && r.sold_at == null;
+const num = (v: unknown): number | null => (typeof v === "number" ? v : null);
 
-/** Preço decrescente, sem preço por último. */
-function byPriceDesc(a: Row, b: Row): number {
-  const pa = typeof a.asking_price === "number" ? a.asking_price : null;
-  const pb = typeof b.asking_price === "number" ? b.asking_price : null;
-  if (pa == null && pb == null) return 0;
-  if (pa == null) return 1;
-  if (pb == null) return -1;
-  return pb - pa;
+/** Regra do app (GetPublicProfileUseCase): preço pedido, senão preço de mercado da carta, senão 0. */
+function sortPrice(r: Row): number {
+  const card = Array.isArray(r.cards) ? r.cards[0] : r.cards;
+  const market = card && typeof card === "object" ? num((card as Row).market_price_brl) : null;
+  return num(r.asking_price) ?? market ?? 0;
 }
 
-function tiles(rows: Row[], limit: number, warnLabel?: string): ListingTile[] {
-  const sorted = [...rows].sort(byPriceDesc);
-  if (warnLabel && sorted.length > limit) {
-    console.warn(`[public] ${warnLabel}: ${sorted.length} anúncios, cortando em ${limit}`);
+function profileTiles(rows: Row[], total: number, label: string): ListingTile[] {
+  if (total > rows.length) {
+    console.warn(`[public] ${label}: ${total} anúncios, mostrando ${rows.length}`);
   }
-  return sorted.slice(0, limit).map(mapTile);
+  return [...rows].sort((a, b) => sortPrice(b) - sortPrice(a)).map(mapTile);
 }
 
 export async function getListingPage(
@@ -46,8 +42,7 @@ export async function getListingPage(
 
     let more: ListingTile[] = [];
     if (!hidden) {
-      const rows = await source.sellerListingRows(listing.userId);
-      more = tiles(rows.filter((r) => isForSale(r) && r.id !== id), MORE_LIMIT);
+      more = (await source.moreFromSeller(listing.userId, id, MORE_LIMIT)).map(mapTile);
     }
 
     if (hidden || listingAvailability(listing) === "unavailable") {
@@ -67,12 +62,17 @@ export async function getProfilePage(
   try {
     const sellerRow = await source.sellerRow(userId);
     if (!sellerRow || isHiddenSeller(sellerRow)) return NOT_FOUND;
-    const rows = await source.sellerListingRows(userId);
+    const [forSale, collection] = await Promise.all([
+      source.profileTab(userId, "forSale", PROFILE_LIMIT),
+      source.profileTab(userId, "collection", PROFILE_LIMIT),
+    ]);
     return {
       kind: "ok",
       seller: mapSeller(sellerRow),
-      forSale: tiles(rows.filter(isForSale), PROFILE_LIMIT, "forSale"),
-      collection: tiles(rows.filter((r) => r.status === "collection"), PROFILE_LIMIT, "collection"),
+      forSale: profileTiles(forSale.rows, forSale.total, "forSale"),
+      forSaleTotal: forSale.total,
+      collection: profileTiles(collection.rows, collection.total, "collection"),
+      collectionTotal: collection.total,
     };
   } catch (e) {
     if (isInvalidId(e)) return NOT_FOUND;

@@ -27,7 +27,8 @@ const ok = (l: PublicListing): ListingPageData => ({ kind: "ok", listing: l, mor
 const tile = (id: string): ListingTile => ({ id, name: "X", setName: null, price: 1, language: "en", imageUrl: null });
 const profile = (o: { seller?: PublicSeller; n?: number } = {}): ProfilePageData => ({
   kind: "ok", seller: o.seller ?? seller,
-  forSale: Array.from({ length: o.n ?? 3 }, (_, i) => tile(String(i))), collection: [],
+  forSale: Array.from({ length: o.n ?? 3 }, (_, i) => tile(String(i))), forSaleTotal: o.n ?? 3,
+  collection: [], collectionTotal: 0,
 });
 
 describe("listingOg", () => {

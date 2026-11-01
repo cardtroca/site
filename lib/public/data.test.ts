@@ -6,7 +6,8 @@ import type { PublicSource } from "./source";
 const spySource = (): PublicSource => ({
   listingRow: vi.fn(async () => null),
   sellerRow: vi.fn(async () => null),
-  sellerListingRows: vi.fn(async () => []),
+  moreFromSeller: vi.fn(async () => []),
+  profileTab: vi.fn(async () => ({ rows: [], total: 0 })),
 });
 
 describe("getListingPage", () => {
@@ -44,14 +45,20 @@ describe("getListingPage", () => {
     }
   });
 
-  it("anúncio de vendedor banido dá unavailable com seller null e more vazio", async () => {
-    const r = await getListingPage(FIXTURE_IDS.listingOfBanned, fixtureSource);
+  it("anúncio de vendedor banido dá unavailable com seller null e more vazio, sem buscar more", async () => {
+    const s: PublicSource = { ...spySource(), listingRow: fixtureSource.listingRow };
+    const r = await getListingPage(FIXTURE_IDS.listingOfBanned, s);
     expect(r).toEqual({ kind: "unavailable", seller: null, more: [] });
+    expect(s.moreFromSeller).not.toHaveBeenCalled();
   });
 
-  it("more tem no máximo 12, por preço decrescente, nulos por último", async () => {
+  it("more só tem à venda sem vendido, sem o próprio, por preço decrescente, nulos por último", async () => {
     const r = await getListingPage(FIXTURE_IDS.listingSale, fixtureSource);
     if (r.kind !== "ok") throw new Error("esperado ok");
+    const ids = r.more.map((t) => t.id);
+    expect(ids).not.toContain(FIXTURE_IDS.listingSold);
+    expect(ids).not.toContain(FIXTURE_IDS.listingCollection);
+    expect(ids).not.toContain(FIXTURE_IDS.listingTrade);
     expect(r.more.length).toBeLessThanOrEqual(12);
     const prices = r.more.map((t) => t.price);
     const nonNull = prices.filter((p): p is number => p != null);
@@ -60,20 +67,13 @@ describe("getListingPage", () => {
     if (firstNull >= 0) expect(prices.slice(firstNull).every((p) => p == null)).toBe(true);
   });
 
-  it("limita more a 12", async () => {
-    const rows = Array.from({ length: 20 }, (_, i) => ({
-      id: `00000000-0000-4000-8000-0000000001${String(i).padStart(2, "0")}`,
-      user_id: FIXTURE_IDS.seller, status: "sale", asking_price: i, sold_at: null,
-    }));
+  it("pede à fonte o vendedor, o id atual e o limite de 12", async () => {
     const s: PublicSource = {
+      ...spySource(),
       listingRow: async () => ({ id: FIXTURE_IDS.listingSale, user_id: FIXTURE_IDS.seller, status: "sale", user_profiles: { id: FIXTURE_IDS.seller, name: "A" } }),
-      sellerRow: async () => null,
-      sellerListingRows: async () => rows,
     };
-    const r = await getListingPage(FIXTURE_IDS.listingSale, s);
-    if (r.kind !== "ok") throw new Error("esperado ok");
-    expect(r.more).toHaveLength(12);
-    expect(r.more[0].price).toBe(19);
+    await getListingPage(FIXTURE_IDS.listingSale, s);
+    expect(s.moreFromSeller).toHaveBeenCalledWith(FIXTURE_IDS.seller, FIXTURE_IDS.listingSale, 12);
   });
 });
 
@@ -94,15 +94,42 @@ describe("getProfilePage", () => {
     expect(await getProfilePage(FIXTURE_IDS.bannedSeller, fixtureSource)).toEqual({ kind: "not_found" });
   });
 
-  it("forSale não tem vendido nem coleção; collection só coleção; ordem por preço", async () => {
+  it("forSale não tem vendido nem coleção; collection só coleção", async () => {
     const r = await getProfilePage(FIXTURE_IDS.seller, fixtureSource);
     if (r.kind !== "ok") throw new Error("esperado ok");
     const ids = r.forSale.map((t) => t.id);
     expect(ids).not.toContain(FIXTURE_IDS.listingSold);
     expect(ids).not.toContain(FIXTURE_IDS.listingCollection);
-    expect(r.collection.map((t) => t.id)).toEqual([FIXTURE_IDS.listingCollection]);
-    const nonNull = r.forSale.map((t) => t.price).filter((p): p is number => p != null);
-    expect(nonNull).toEqual([...nonNull].sort((a, b) => b - a));
+    expect(r.collection.map((t) => t.id)).toContain(FIXTURE_IDS.listingCollection);
+    expect(r.forSaleTotal).toBe(r.forSale.length);
+    expect(r.collectionTotal).toBe(r.collection.length);
+  });
+
+  it("ordena como o app: preço pedido, senão preço de mercado; o mercado não vai para o objeto", async () => {
+    const card = (market: number | null) => ({ name: "C", market_price_brl: market });
+    const rows = [
+      { id: "a", status: "collection", asking_price: null, cards: card(10) },
+      { id: "b", status: "collection", asking_price: null, cards: card(777) },
+      { id: "c", status: "collection", asking_price: 50, cards: card(1) },
+      { id: "d", status: "collection", asking_price: null, cards: card(null) },
+    ];
+    const s: PublicSource = {
+      ...spySource(),
+      sellerRow: async () => ({ id: FIXTURE_IDS.seller, name: "A" }),
+      profileTab: async (_u, tab) => (tab === "collection" ? { rows, total: 4 } : { rows: [], total: 0 }),
+    };
+    const r = await getProfilePage(FIXTURE_IDS.seller, s);
+    if (r.kind !== "ok") throw new Error("esperado ok");
+    expect(r.collection.map((t) => t.id)).toEqual(["b", "c", "a", "d"]);
+    expect(JSON.stringify(r)).not.toMatch(/market/i);
+    expect(JSON.stringify(r)).not.toContain("777");
+  });
+
+  it("fixture: coleção segue o preço de mercado e sem o campo no resultado", async () => {
+    const r = await getProfilePage(FIXTURE_IDS.seller, fixtureSource);
+    if (r.kind !== "ok") throw new Error("esperado ok");
+    expect(r.collection.map((t) => t.id)).toEqual([FIXTURE_IDS.listingCollection2, FIXTURE_IDS.listingCollection]);
+    expect(JSON.stringify(r)).not.toMatch(/market/i);
   });
 
   it("vendedor sem avaliações e sem anúncios: ok com listas vazias", async () => {
@@ -112,20 +139,33 @@ describe("getProfilePage", () => {
     expect(r.seller.planLabel).toBeNull();
     expect(r.forSale).toEqual([]);
     expect(r.collection).toEqual([]);
+    expect(r.forSaleTotal).toBe(0);
   });
 
-  it("corta em 300 com aviso", async () => {
+  it("pede 300 por aba e usa o total real da fonte, avisando quando corta", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const rows = Array.from({ length: 350 }, (_, i) => ({ id: `id${i}`, user_id: FIXTURE_IDS.seller, status: "sale", asking_price: i, sold_at: null }));
+    const rows = Array.from({ length: 300 }, (_, i) => ({ id: `id${i}`, status: "sale", asking_price: i, sold_at: null }));
     const s: PublicSource = {
-      listingRow: async () => null,
+      ...spySource(),
       sellerRow: async () => ({ id: FIXTURE_IDS.seller, name: "A" }),
-      sellerListingRows: async () => rows,
+      profileTab: vi.fn(async (_u: string, tab: "forSale" | "collection") => (tab === "forSale" ? { rows, total: 350 } : { rows: [], total: 0 })),
     };
     const r = await getProfilePage(FIXTURE_IDS.seller, s);
     if (r.kind !== "ok") throw new Error("esperado ok");
+    expect(s.profileTab).toHaveBeenCalledWith(FIXTURE_IDS.seller, "forSale", 300);
+    expect(s.profileTab).toHaveBeenCalledWith(FIXTURE_IDS.seller, "collection", 300);
     expect(r.forSale).toHaveLength(300);
+    expect(r.forSale[0].price).toBe(299);
+    expect(r.forSaleTotal).toBe(350);
     expect(warn).toHaveBeenCalled();
     warn.mockRestore();
+  });
+});
+
+describe("fixtureSource", () => {
+  it("moreFromSeller respeita filtro, exclusão e limite", async () => {
+    const rows = await fixtureSource.moreFromSeller(FIXTURE_IDS.seller, FIXTURE_IDS.listingSale, 2);
+    expect(rows).toHaveLength(2);
+    expect(rows.map((r) => r.id)).not.toContain(FIXTURE_IDS.listingSale);
   });
 });

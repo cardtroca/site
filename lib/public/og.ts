@@ -33,8 +33,7 @@ export function profileOg(data: ProfilePageData): OgData {
   if (data.kind !== "ok") {
     return { title: "CardTroca — Perfil de colecionador", description: GENERIC_DESCRIPTION, image: null };
   }
-  const { seller, forSale } = data;
-  const n = forSale.length;
+  const { seller, forSaleTotal: n } = data;
   const parts = [`${n} ${n === 1 ? "carta" : "cartas"} à venda`];
   if (seller.totalReviews > 0) parts.push(`★ ${ratingText(seller.rating, seller.totalReviews).value}`);
   return {

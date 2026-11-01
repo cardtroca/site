@@ -49,7 +49,7 @@ export default async function ProfilePage({ params }: Props) {
   const data = await load(userId);
   if (data.kind === "not_found") notFound();
 
-  const { seller, forSale, collection } = data;
+  const { seller, forSale, forSaleTotal, collection, collectionTotal } = data;
   const path = `/profile/${seller.id}`;
   const initial = seller.name.trim().charAt(0).toUpperCase() || "?";
 
@@ -67,7 +67,7 @@ export default async function ProfilePage({ params }: Props) {
             <ProfileHeader seller={seller} />
           </aside>
           <div className="pp-right">
-            <ProfileTabs forSale={forSale} collection={collection} />
+            <ProfileTabs forSale={forSale} forSaleTotal={forSaleTotal} collection={collection} collectionTotal={collectionTotal} />
           </div>
         </div>
       </main>

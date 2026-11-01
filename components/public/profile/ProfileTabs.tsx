@@ -7,12 +7,15 @@ import { Icon } from "../Icon";
 import { ListingTileCard } from "../ListingTileCard";
 
 /** Port de _TabsHeader + ProfileCardList: pílula deslizante, contagem, Filtrar e grade. */
-export function ProfileTabs({ forSale, collection }: { forSale: ListingTile[]; collection: ListingTile[] }) {
+export function ProfileTabs({ forSale, forSaleTotal, collection, collectionTotal }: {
+  forSale: ListingTile[]; forSaleTotal: number; collection: ListingTile[]; collectionTotal: number;
+}) {
   const gate = useAppGate();
   const [tab, setTab] = useState<0 | 1>(0);
   const tiles = tab === 0 ? forSale : collection;
-  const n = tiles.length;
-  const labels = [`À venda · ${forSale.length}`, `Coleção · ${collection.length}`];
+  // Contagem real da aba (a grade pode estar cortada em 300).
+  const n = Math.max(tab === 0 ? forSaleTotal : collectionTotal, tiles.length);
+  const labels = [`À venda · ${forSaleTotal}`, `Coleção · ${collectionTotal}`];
 
   return (
     <>

@@ -30,5 +30,10 @@ export type ListingPageData =
   | { kind: "not_found" };
 
 export type ProfilePageData =
-  | { kind: "ok"; seller: PublicSeller; forSale: ListingTile[]; collection: ListingTile[] }
+  | {
+      kind: "ok"; seller: PublicSeller;
+      /** Cortadas em 300; os totais são a contagem real, para "À venda · N" e "Coleção · N". */
+      forSale: ListingTile[]; forSaleTotal: number;
+      collection: ListingTile[]; collectionTotal: number;
+    }
   | { kind: "not_found" };

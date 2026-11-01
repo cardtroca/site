@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import { Footer } from "@/components/layout/Footer";
 import { MotionLanding } from "@/components/home/MotionLanding";
@@ -16,9 +16,16 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
+/**
+ * A home é sempre escura: barra do navegador e fundo da página na cor da
+ * landing, e `cover` para ela ir até as bordas do iPhone (as seções já usam
+ * env(safe-area-inset-*)).
+ */
+export const viewport: Viewport = { themeColor: "#040A09", viewportFit: "cover" };
+
 export default function Home() {
   return (
-    <div className={`dark ${poppins.variable} bg-[#040A09]`}>
+    <div className={`home-dark dark ${poppins.variable} bg-[#040A09]`}>
       <JsonLd
         data={{
           "@context": "https://schema.org",

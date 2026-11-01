@@ -646,7 +646,62 @@ function FinalCTA() {
 
 /* ── Página ─────────────────────────────────────────────── */
 
+const BG_STOPS: [number, [number, number, number]][] = [
+  [0, [0x0b, 0x2a, 0x24]],
+  [0.55, [0x06, 0x12, 0x0f]],
+  [1, [0x04, 0x0a, 0x09]],
+];
+const BG_GRADIENT = `radial-gradient(120% 60% at 50% 0%, ${BG_STOPS.map(
+  ([at, c]) => `rgb(${c.join(",")}) ${Math.round(at * 100)}%`,
+).join(", ")})`;
+
+// Cor do degradê no centro de uma altura do fundo (t = 0 no topo, 1 no fim do raio).
+function bgColorAt(t: number) {
+  const i = BG_STOPS.findIndex(([at]) => at >= t);
+  if (i <= 0) return `rgb(${BG_STOPS[i < 0 ? BG_STOPS.length - 1 : 0][1].join(",")})`;
+  const [a, ca] = BG_STOPS[i - 1];
+  const [b, cb] = BG_STOPS[i];
+  const k = (t - a) / (b - a);
+  return `rgb(${ca.map((v, j) => Math.round(v + (cb[j] - v) * k)).join(",")})`;
+}
+
+// O Safari pinta a área segura com a cor sólida do fundo da página, não com o
+// degradê. Segue a cor do degradê na borda de baixo da tela enquanto rola.
+function useSafeAreaColor(ref: React.RefObject<HTMLDivElement | null>) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const root = document.documentElement;
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    let frame = 0;
+    const paint = () => {
+      frame = 0;
+      const bottom = window.innerHeight - el.getBoundingClientRect().top;
+      const color = bgColorAt(Math.max(0, bottom / (el.offsetHeight * 0.6)));
+      root.style.backgroundColor = color;
+      document.body.style.backgroundColor = color;
+      meta?.setAttribute("content", color);
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(paint);
+    };
+    paint();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      root.style.backgroundColor = "";
+      document.body.style.backgroundColor = "";
+    };
+  }, [ref]);
+}
+
 export function MotionLanding() {
+  const pageRef = useRef<HTMLDivElement>(null);
+  useSafeAreaColor(pageRef);
+
   // recarregar no meio da página faria o spring varrer todos os segmentos
   useEffect(() => {
     history.scrollRestoration = "manual";
@@ -654,13 +709,7 @@ export function MotionLanding() {
   }, []);
 
   return (
-    <div
-      className="min-h-screen text-white"
-      style={{
-        background:
-          "radial-gradient(120% 60% at 50% 0%, #0B2A24 0%, #06120F 55%, #040A09 100%)",
-      }}
-    >
+    <div ref={pageRef} className="min-h-screen text-white" style={{ background: BG_GRADIENT }}>
       <header className="fixed inset-x-0 top-0 z-50 hidden md:block">
         <div className="mx-auto flex max-w-[1280px] items-center justify-between px-10 py-5">
           <a href="/" aria-label="CardTroca — início">

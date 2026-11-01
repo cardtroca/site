@@ -128,7 +128,7 @@
   /* Home escura: o fundo atrás das áreas seguras e do overscroll segue a landing. */
   html:has(.home-dark),
   html:has(.home-dark) body {
-    background-color: #040A09;
+    background-color: #0A231E;
     color-scheme: dark;
   }
 

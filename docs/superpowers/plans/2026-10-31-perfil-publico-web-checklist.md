@@ -19,3 +19,5 @@ Para o Lux rodar depois do deploy, com aparelhos reais.
 1. Sob `next start`, o corpo HTML do 404 vem vazio no servidor (o conteúdo chega pelo payload RSC; o status 404 está correto). É comportamento do Next 14.2 com ISR + `notFound()`. Rever depois de atualizar o Next.
 2. O banner de cookies do site fica fora de `.app-look` e segue o tema do site: pode aparecer escuro à noite nestas páginas claras.
 3. `PUBLIC_PAGES_FIXTURES` deve ficar sem definir na Vercel em Production.
+4. Se o Supabase cair no primeiro acesso a um anúncio ou perfil que ainda não está no cache do ISR, o visitante vê a página 500 padrão do Next, não a tela de erro do app. No Next 14.2, o `error.tsx` não pega erro de render do servidor em rota ISR. Páginas que já estão no cache continuam sendo servidas.
+5. A aba Coleção do perfil é ordenada no banco por `order("cards(market_price_brl)")` (`lib/public/source.ts`), recurso do PostgREST 11+. Isso não pôde ser testado contra o PRD. Se `/profile/<id>` der 500 logo depois do deploy, apague essa linha de `.order(...)`: o `data.ts` reordena do mesmo jeito. Só o corte de 300 cartas deixa de pegar as mais caras.

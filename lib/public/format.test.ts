@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   conditionChip, firstName, formatBRL, galleryImages, languageLabel, languageShort,
-  planLabel, priceCaption, rarityLabel, ratingText, statusLabel,
+  followersLabel, planLabel, priceCaption, rarityLabel, ratingText, reviewsLabel, statusLabel,
 } from "./format";
 import type { PublicListing } from "./types";
 
@@ -41,6 +41,11 @@ describe("format", () => {
     expect(planLabel("leiloeiro", false)).toBe("Leiloeiro"); expect(planLabel("free", true)).toBeNull();
     expect(planLabel(null, true)).toBe("Pro"); expect(planLabel(null, false)).toBeNull();
   });
+  it("followersLabel e reviewsLabel: singular só em 1", () => {
+    expect([0, 1, 2].map(followersLabel)).toEqual(["seguidores", "seguidor", "seguidores"]);
+    expect([0, 1, 2].map(reviewsLabel)).toEqual(["comentários", "comentário", "comentários"]);
+  });
+
   it("ratingText", () => {
     expect(ratingText(0, 0)).toEqual({ value: "—", label: "Sem avaliações" });
     expect(ratingText(4.94, 37)).toEqual({ value: "4,9", label: "avaliação" });

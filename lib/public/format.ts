@@ -81,6 +81,15 @@ export function ratingText(rating: number, totalReviews: number): { value: strin
   return { value: rating.toFixed(1).replace(".", ","), label: "avaliação" };
 }
 
+/** Rótulos do card de números do perfil, no singular quando o número é 1 (como o app). */
+export function followersLabel(n: number): string {
+  return n === 1 ? "seguidor" : "seguidores";
+}
+
+export function reviewsLabel(n: number): string {
+  return n === 1 ? "comentário" : "comentários";
+}
+
 export function priceCaption(
   status: ListingStatus,
   askingPrice: number | null,

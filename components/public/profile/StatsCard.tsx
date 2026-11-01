@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
-import { ratingText } from "@/lib/public/format";
+import { followersLabel, ratingText, reviewsLabel } from "@/lib/public/format";
 import type { PublicSeller } from "@/lib/public/types";
 import { useAppGate } from "../AppGate";
 import { Icon } from "../Icon";
@@ -14,8 +14,8 @@ export function StatsCard({ seller }: { seller: PublicSeller }) {
   const rating = ratingText(seller.rating, seller.totalReviews);
   const items: Stat[] = [
     { value: rating.value, label: rating.label, star: true },
-    { value: String(seller.totalReviews), label: "comentários", origin: "reviews" },
-    { value: String(seller.followers), label: "seguidores", origin: "followers" },
+    { value: String(seller.totalReviews), label: reviewsLabel(seller.totalReviews), origin: "reviews" },
+    { value: String(seller.followers), label: followersLabel(seller.followers), origin: "followers" },
     { value: String(seller.totalTrades), label: "trocas" },
   ];
   return (
@@ -28,7 +28,7 @@ export function StatsCard({ seller }: { seller: PublicSeller }) {
           </>
         );
         return (
-          <Fragment key={s.label}>
+          <Fragment key={i}>
             {i > 0 && <div className="pp-vsep" aria-hidden="true" />}
             {s.origin ? (
               <button type="button" className="pp-stat tap" onClick={() => gate(s.origin as string)}>

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { LegalPage } from "@/components/LegalPage";
 
 export const metadata: Metadata = {
   title: "Central de Ajuda | CardTroca",
-  description: "Central de ajuda e manual do aplicativo CardTroca.",
+  description: "Perguntas frequentes do CardTroca: créditos e Pro, busca e lista de desejos, anúncios, modo troca, avaliações e segurança em encontros.",
+  alternates: { canonical: "/central-de-ajuda" },
 };
 
 const sections = [
@@ -56,11 +58,14 @@ const sections = [
 
 export default function HelpPage() {
   return (
-    <LegalPage
-      eyebrow="Ajuda"
-      title="Central de Ajuda"
-      intro="Perguntas frequentes e manual resumido das principais áreas do CardTroca."
-      sections={sections}
-    />
+    <>
+      <FaqJsonLd items={sections} />
+      <LegalPage
+        eyebrow="Ajuda"
+        title="Central de Ajuda"
+        intro="Perguntas frequentes e manual resumido das principais áreas do CardTroca."
+        sections={sections}
+      />
+    </>
   );
 }

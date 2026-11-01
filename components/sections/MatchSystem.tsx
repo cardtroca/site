@@ -38,7 +38,7 @@ export function MatchSystem() {
               <div className="relative h-full w-full">
                 <Image
                   src="/images/swipe.webp"
-                  alt=""
+                  alt="Modo troca do CardTroca: deslize a carta para propor uma troca"
                   fill
                   unoptimized
                   priority
@@ -115,7 +115,7 @@ export function MatchSystem() {
               <div className="relative h-full w-full">
                 <Image
                   src="/images/match.webp"
-                  alt=""
+                  alt="Match no CardTroca quando dois colecionadores querem trocar"
                   fill
                   unoptimized
                   sizes="300px"

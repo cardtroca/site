@@ -39,7 +39,7 @@ export function Search() {
               <div className="relative h-full w-full">
                 <Image
                   src="/images/buscar.webp"
-                  alt=""
+                  alt="Busca de cartas Pokémon TCG no catálogo do CardTroca"
                   fill
                   unoptimized
                   sizes="300px"

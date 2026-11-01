@@ -5,6 +5,7 @@ import { motion, useInView, useReducedMotion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Check, Crown, Sparkles, X } from "lucide-react";
+import { openAppStore } from "@/components/AppDownloadButton";
 
 const plans = [
   {
@@ -12,26 +13,22 @@ const plans = [
     name: "Créditos",
     price: "Sem mensalidade",
     period: "pacotes de créditos à parte",
-    description: "Para usar recursos essenciais e pagar por ações específicas quando precisar.",
+    description: "Para começar a encontrar cartas, montar anúncios e negociar no seu ritmo.",
     icon: <Sparkles className="w-5 h-5" />,
     color: "from-slate-500 to-gray-600",
     features: [
       { label: "Busca no catálogo", value: "Incluído", included: true },
       { label: "Busca de cartas à venda com filtros", value: "Incluído", included: true },
       { label: "Cartas próximas a você", value: "Incluído", included: true },
-      { label: "Adicionar cartas via código", value: "Incluído", included: true },
+      { label: "Adicionar cartas por busca", value: "Incluído", included: true },
       { label: "Modo troca", value: "Incluído", included: true },
       { label: "Lista de desejos", value: "Incluído", included: true },
       { label: "Avaliações", value: "Incluído", included: true },
       { label: "Adicionar cartas com Scanner IA", value: "Disponível no Pro", included: false },
-      { label: "Meus anúncios sem gastar créditos", value: "1 crédito/uso", included: false },
-      { label: "Meus anúncios ilimitados", value: "Disponível no Pro", included: false },
-      { label: "Chat com vendedor/comprador sem créditos", value: "3 créditos/uso", included: false },
-      { label: "Chat após match sem créditos", value: "5 créditos/uso", included: false },
-      { label: "Uso sem comprar pacotes de créditos", value: "Pacotes à parte", included: false },
-      { label: "App sem ads", value: "Ads durante o uso", included: false },
-      { label: "Destaque básico incluso", value: "2 créditos/uso", included: false },
-      { label: "Destaque premium incluso", value: "Disponível no Pro", included: false },
+      { label: "Conversas e ações com créditos", value: "Conforme o uso", included: false },
+      { label: "Álbum por set e coleções personalizadas", value: "Disponível no Pro", included: false },
+      { label: "Observadores das suas cartas", value: "Disponível no Pro", included: false },
+      { label: "Destaque Pro", value: "Disponível no Pro", included: false },
     ],
     cta: "Ver pacotes de créditos",
     variant: "secondary" as const,
@@ -41,7 +38,7 @@ const plans = [
     name: "Pro",
     price: "R$ 19,90",
     period: "por mês",
-    description: "Para colecionadores ativos e entusiastas.",
+    description: "Para quem quer organizar a coleção e negociar com recursos avançados.",
     icon: <Crown className="w-5 h-5" />,
     color: "from-accent to-amber-500",
     recommended: true,
@@ -49,19 +46,15 @@ const plans = [
       { label: "Busca no catálogo", value: "Incluído", included: true },
       { label: "Busca de cartas à venda com filtros", value: "Incluído", included: true },
       { label: "Cartas próximas a você", value: "Incluído", included: true },
-      { label: "Adicionar cartas via código", value: "Incluído", included: true },
+      { label: "Adicionar cartas por busca", value: "Incluído", included: true },
       { label: "Modo troca", value: "Incluído", included: true },
       { label: "Lista de desejos", value: "Incluído", included: true },
       { label: "Avaliações", value: "Incluído", included: true },
       { label: "Adicionar cartas com Scanner IA", value: "Incluído", included: true },
-      { label: "Meus anúncios sem gastar créditos", value: "Incluído", included: true },
-      { label: "Meus anúncios ilimitados", value: "Incluído", included: true },
-      { label: "Chat com vendedor/comprador sem créditos", value: "Incluído", included: true },
-      { label: "Chat após match sem créditos", value: "Incluído", included: true },
-      { label: "Uso sem comprar pacotes de créditos", value: "Incluído", included: true },
-      { label: "App sem ads", value: "Incluído", included: true },
-      { label: "Destaque básico incluso", value: "Incluído", included: true },
-      { label: "Destaque premium incluso", value: "Incluído", included: true },
+      { label: "Conversas sem limite de créditos", value: "Incluído", included: true },
+      { label: "Álbum por set e coleções personalizadas", value: "Incluído", included: true },
+      { label: "Observadores das suas cartas", value: "Incluído", included: true },
+      { label: "Scanner e destaque Pro", value: "Incluído", included: true },
     ],
     cta: "Assinar Pro",
     variant: "accent" as const,
@@ -201,6 +194,7 @@ export function Plans() {
                     size="md"
                     fullWidth
                     className={plan.recommended ? "shadow-primary-glow" : ""}
+                    onClick={openAppStore}
                   >
                     {plan.cta}
                   </Button>

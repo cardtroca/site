@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anúncio na web — v3 (fiel ao app)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400,0..1,0" rel="stylesheet">
+<style>
+  /* Tokens de lib/core/theme/app_theme.dart */
+  :root{
+    --bg:#F5F6F6; --surface:#FFFFFF; --surfaceVar:#EEF0F0;
+    --primary:#029779; --primaryLight:#E6FAF4; --primaryDark:#104E4B;
+    --success:#0E9F6E; --text:#11161D; --text2:#586572; --text3:#8A95A2; --border:#E3E6E6;
+    --soft:0 8px 24px -8px rgba(0,0,0,.06);
+    --subtle:0 1px 2px rgba(0,0,0,.06);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Poppins,system-ui,sans-serif;background:#dfe5e4;color:var(--text);padding:28px 20px 60px;-webkit-font-smoothing:antialiased}
+  .ms{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;display:inline-block;-webkit-font-feature-settings:'liga';font-feature-settings:'liga'}
+  h1{font-size:21px;font-weight:600;text-align:center}
+  h2{font-size:16px;font-weight:600;text-align:center;margin:40px 0 4px}
+  .sub{color:var(--text2);text-align:center;font-size:13px;margin:6px auto 18px;max-width:760px}
+
+  /* ---------- componentes do detalhe (card_detail_screen.dart) ---------- */
+  .circle{width:38px;height:38px;border-radius:50%;background:var(--surface);box-shadow:var(--subtle);display:flex;align-items:center;justify-content:center;color:var(--text);cursor:pointer;border:none}
+  .circle .ms{font-size:21px}
+  .stage{background:radial-gradient(90% 90% at 50% 45%,#FFFFFF,#F5F6F6);position:relative;display:flex;justify-content:center}
+  .tiltwrap{perspective:900px;display:flex;justify-content:center}
+  .tcard{position:relative;border-radius:6px;transform-style:preserve-3d;will-change:transform;box-shadow:0 18px 32px -10px rgba(0,0,0,.28)}
+  .tcard img{display:block;width:100%;border-radius:6px}
+  .shine{position:absolute;inset:0;border-radius:6px;pointer-events:none;opacity:.55;
+    background:linear-gradient(115deg,rgba(255,255,255,0) 38%,rgba(255,255,255,.38) 50%,rgba(255,255,255,0) 62%);background-size:300% 300%}
+  .herotag{position:absolute;left:16px;bottom:12px;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.9);box-shadow:var(--subtle);border-radius:999px;padding:4px 10px 4px 8px;font-size:11px;font-weight:500}
+  .herotag .ms{font-size:14px;color:var(--primary);font-variation-settings:'FILL' 1}
+  .dcard{background:var(--surface);border-radius:22px;box-shadow:var(--soft);padding:18px;margin:12px 16px 0}
+  .name{font-size:22px;font-weight:600;line-height:1.2;letter-spacing:-.3px}
+  .setline{font-size:13px;color:var(--text2);margin-top:2px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+  .chip{border-radius:999px;padding:4px 10px;font-size:12px;font-weight:500}
+  .chip.nm{color:var(--primary);background:rgba(2,151,121,.10)}
+  .chip.lang{color:var(--text2);background:var(--surfaceVar)}
+  .chip.st{color:var(--primary);background:rgba(2,151,121,.10)}
+  .pricecap{font-size:12px;color:var(--text2);margin-top:18px}
+  .pricerow{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 12px}
+  .price{font-size:32px;font-weight:600;letter-spacing:-1px;line-height:1.1;font-variant-numeric:tabular-nums}
+  .delta{display:flex;align-items:center;gap:3px;border-radius:999px;padding:5px 10px 5px 8px;font-size:11.5px;font-weight:500;color:var(--success);background:rgba(14,159,110,.10);white-space:nowrap}
+  .delta .ms{font-size:15px}
+  .avgline{font-size:12px;color:var(--text2);margin-top:8px}
+  .divider{height:1px;background:rgba(227,230,230,.6);margin:16px 0 14px}
+  .loc{display:flex;align-items:center;gap:10px}
+  .iconbox{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex:none}
+  .iconbox.mint{background:var(--primaryLight);color:var(--primary)}
+  .iconbox.gray{background:var(--surfaceVar);color:var(--text2)}
+  .iconbox .ms{font-size:19px}
+  .t1{font-size:14px;font-weight:600;line-height:1.3}
+  .t2{font-size:12px;color:var(--text2);line-height:1.3}
+  .seller{display:flex;align-items:center;gap:14px;cursor:pointer}
+  .avatar{width:52px;height:52px;border-radius:50%;background:rgba(2,151,121,.09);box-shadow:0 2px 10px rgba(2,151,121,.10);display:flex;align-items:center;justify-content:center;color:var(--primary);font-size:22px;font-weight:600;flex:none}
+  .sname{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:600}
+  .plan{height:20px;display:flex;align-items:center;gap:2px;padding:0 6px;border-radius:999px;font-size:10px;font-weight:600;background:var(--primaryDark);color:#fff}
+  .plan .ms{font-size:11px;font-variation-settings:'FILL' 1}
+  .scity{display:flex;align-items:center;gap:3px;font-size:12px;color:rgba(17,22,29,.6);margin-top:3px}
+  .scity .ms{font-size:13px;color:rgba(17,22,29,.45)}
+  .medalline{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;color:var(--text2)}
+  .coin{width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3c4,#D98E04 60%,#a86a00);box-shadow:0 1px 2px rgba(0,0,0,.2)}
+  .chev{color:var(--text3);margin-left:auto;font-size:24px}
+  .notes .cap{font-size:12px;font-weight:500;color:var(--text2)}
+  .notes p{font-size:14px;line-height:1.55;color:rgba(17,22,29,.85);margin-top:6px}
+  .exp{background:var(--surface);border-radius:22px;box-shadow:var(--soft);margin:12px 16px 0;overflow:hidden}
+  .exp .head{display:flex;align-items:center;gap:12px;padding:16px;cursor:pointer}
+  .exp .head .ms.chev{margin-left:auto;transition:transform .2s}
+  .exp.open .head .ms.chev{transform:rotate(180deg)}
+  .exp .content{display:none;padding:0 16px 16px}
+  .exp.open .content{display:block}
+  .spec{display:flex;justify-content:space-between;font-size:13px;padding:7px 0;border-top:1px solid rgba(227,230,230,.6)}
+  .spec span{color:var(--text2)}
+  .spec b{font-weight:500}
+  .lock{position:relative;border-radius:16px;background:var(--bg);padding:12px;cursor:pointer;overflow:hidden}
+  .lock .blur{filter:blur(6px);opacity:.8;user-select:none}
+  .lock .over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:0 18px}
+  .lock .over .pill{display:flex;align-items:center;gap:6px;background:var(--surface);box-shadow:var(--soft);border-radius:999px;padding:8px 14px;font-size:12.5px;font-weight:600;color:var(--text)}
+  .lock .over .pill .ms{font-size:16px;color:var(--primary)}
+  .srcrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;font-size:13px}
+  .srcrow b{font-weight:600}
+  .bars{display:flex;align-items:flex-end;gap:5px;height:56px;margin-top:6px}
+  .bars i{flex:1;background:var(--primary);border-radius:3px 3px 0 0;opacity:.6}
+  .more h3{font-size:16px;font-weight:600;margin:22px 16px 10px;display:flex;justify-content:space-between;align-items:baseline}
+  .more h3 a{font-size:13px;font-weight:600;color:var(--primary);text-decoration:none}
+  .tiles{display:flex;gap:10px;overflow-x:auto;padding:4px 16px 16px;scrollbar-width:none}
+  .tiles::-webkit-scrollbar{display:none}
+  .tile{flex:0 0 128px;background:var(--surface);border-radius:16px;box-shadow:var(--soft);padding:8px 8px 10px;cursor:pointer}
+  .tile img{width:100%;aspect-ratio:63/88;object-fit:cover;border-radius:8px;display:block}
+  .tile .tn{font-size:12px;font-weight:500;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile .tp{font-size:13px;font-weight:600}
+  .tile .tc{font-size:11px;color:var(--text2)}
+  /* barra flutuante (_FloatingCta) */
+  .footer{position:absolute;left:0;right:0;bottom:46px;padding:20px 12px 12px;z-index:20;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,.95) 60%,rgba(255,255,255,.88))}
+  .glassbar{display:flex;align-items:center;gap:8px;padding:8px 8px 8px 18px;border-radius:24px;background:rgba(255,255,255,.92);backdrop-filter:blur(18px);box-shadow:0 10px 30px -10px rgba(0,0,0,.16)}
+  .glassbar .cap{font-size:11px;color:var(--text2);line-height:1.2}
+  .glassbar .val{font-size:18px;font-weight:600;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+  .chatbar{margin-left:auto;height:48px;min-width:132px;padding:0 16px;border:none;border-radius:18px;background:var(--primary);color:#fff;font:600 14px Poppins;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer}
+  .chatbar .ms{font-size:18px}
+
+  /* ---------- celular ---------- */
+  .mobilewrap{display:flex;justify-content:center}
+  .phone{width:360px;height:740px;border-radius:46px;background:#111;padding:10px;box-shadow:0 30px 60px -20px rgba(0,0,0,.35)}
+  .screen{position:relative;width:100%;height:100%;border-radius:37px;overflow:hidden;background:var(--bg)}
+  .scroll{position:absolute;inset:0;overflow-y:auto;scrollbar-width:none}
+  .scroll::-webkit-scrollbar{display:none}
+  .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:96px;height:26px;background:#111;border-radius:20px;z-index:30}
+  .url{position:absolute;bottom:0;left:0;right:0;height:46px;background:rgba(245,246,246,.96);backdrop-filter:blur(10px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;z-index:25}
+  .url div{background:#e4e7e7;border-radius:10px;padding:5px 14px;font-size:11px;color:var(--text2)}
+  /* faixa "abrir no app": só existe na web */
+  .smart{position:absolute;top:0;left:0;right:0;z-index:26;background:rgba(245,246,246,.96);backdrop-filter:blur(12px);border-bottom:.5px solid var(--border);padding:40px 12px 8px;display:flex;align-items:center;gap:10px}
+  .applogo{width:36px;height:36px;border-radius:10px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:var(--subtle);flex:none}
+  .applogo .ms{font-size:20px}
+  .smart .t1{font-size:13px}
+  .smart .t2{font-size:11px}
+  .smart button{margin-left:auto;background:var(--primary);color:#fff;border:none;border-radius:999px;font:600 12.5px Poppins;padding:7px 16px;cursor:pointer}
+  .mtop{position:absolute;top:92px;left:16px;right:16px;display:flex;justify-content:flex-end;gap:8px;z-index:5}
+
+  /* folha (bottom sheet) */
+  .sheetbg{position:absolute;inset:0;background:rgba(17,22,29,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40}
+  .sheet{position:absolute;left:0;right:0;bottom:0;background:var(--surface);border-radius:24px 24px 0 0;padding:10px 20px 24px;transform:translateY(105%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:41}
+  .open > .sheetbg{opacity:1;pointer-events:auto}
+  .open > .sheet{transform:none}
+  .grab{width:36px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 14px}
+  .dl-head{display:flex;align-items:center;gap:14px}
+  .dl-thumb{width:54px;flex:none;transform:rotate(-6deg)}
+  .dl-thumb img{width:100%;border-radius:4px;box-shadow:0 8px 16px -6px rgba(0,0,0,.35)}
+  .dl-title{font-size:18px;font-weight:600;line-height:1.25}
+  .feats{list-style:none;margin:16px 0;display:grid;gap:10px}
+  .feats li{display:flex;gap:12px;align-items:center}
+  .stores{display:flex;flex-direction:column;gap:8px}
+  .store{display:flex;align-items:center;gap:10px;background:#000;color:#fff;border-radius:12px;padding:8px 16px;justify-content:center;cursor:pointer;text-decoration:none}
+  .store svg{width:22px;height:22px;fill:#fff}
+  .store div{text-align:left;line-height:1.1}
+  .store small{font-size:9.5px;display:block}
+  .store b{font-size:16px;font-weight:600}
+  .already{display:block;text-align:center;margin-top:14px;font-size:13px;color:var(--primary);font-weight:600;cursor:pointer}
+
+  /* ---------- desktop ---------- */
+  .deskfit{width:100%;max-width:1180px;margin:0 auto}
+  .browser{width:1180px;transform-origin:top left;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 30px 60px -20px rgba(0,0,0,.3)}
+  .chrome{height:40px;background:#e9ecec;display:flex;align-items:center;gap:7px;padding:0 14px}
+  .chrome i{width:11px;height:11px;border-radius:50%;background:#ff5f57}
+  .chrome i:nth-child(2){background:#febc2e}.chrome i:nth-child(3){background:#28c840}
+  .chrome .addr{margin-left:18px;flex:1;max-width:520px;background:#fff;border-radius:8px;padding:4px 12px;font-size:12px;color:var(--text2)}
+  .page{position:relative;height:780px;overflow:hidden;background:var(--bg)}
+  .pscroll{position:absolute;inset:0;overflow-y:auto}
+  .nav{height:64px;background:rgba(245,246,246,.94);backdrop-filter:blur(12px);border-bottom:.5px solid var(--border);display:flex;align-items:center;padding:0 48px;gap:26px;position:sticky;top:0;z-index:5}
+  .brand{font-weight:600;font-size:22px;color:var(--primary);letter-spacing:-.3px}
+  .nav a{font-size:13.5px;color:var(--text2);text-decoration:none}
+  .nav .sp{flex:1}
+  .nav button{background:var(--primary);color:#fff;border:none;border-radius:999px;font:600 13px Poppins;padding:9px 18px;cursor:pointer}
+  .dmain{display:grid;grid-template-columns:1fr 460px;gap:28px;padding:24px 48px 0;align-items:start}
+  .dstage{position:sticky;top:88px;border-radius:28px;background:radial-gradient(70% 70% at 50% 45%,#FFFFFF,#EEF0F0);height:620px;display:flex;align-items:center;justify-content:center}
+  .dstage .actions{position:absolute;top:16px;right:16px;display:flex;gap:8px}
+  .dright .dcard,.dright .exp{margin:0 0 12px}
+  .dright .footer{position:static;padding:0;background:none;margin-bottom:12px}
+  .dright .glassbar{box-shadow:var(--soft)}
+  .dmore h3{margin:26px 48px 10px}
+  .dmore .tiles{padding:4px 48px 40px;gap:14px}
+  .dmore .tile{flex:0 0 160px}
+  .foot{border-top:.5px solid var(--border);padding:20px 48px;font-size:12px;color:var(--text3);display:flex;justify-content:space-between;background:var(--surface)}
+  .modalbg{position:absolute;inset:0;background:rgba(17,22,29,.5);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .25s;z-index:40}
+  .modal{position:absolute;top:50%;left:50%;width:740px;transform:translate(-50%,-46%) scale(.97);opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.2,.8,.2,1);z-index:41;background:var(--surface);border-radius:24px;padding:30px;display:grid;grid-template-columns:1fr 236px;gap:28px}
+  .open > .modalbg{opacity:1;pointer-events:auto}
+  .open > .modal{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+  .modal .x{position:absolute;top:14px;right:14px}
+  .modal .stores{flex-direction:row}
+  .modal .store{flex:1}
+  .qrbox{background:var(--primaryLight);border-radius:22px;padding:18px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .qr{width:172px;height:172px;background:#fff;border-radius:14px;padding:10px}
+  .qrbox p{font-size:12px;color:var(--text2);margin-top:10px;line-height:1.4}
+  .qrbox p b{color:var(--text);font-weight:600}
+  .note{max-width:860px;margin:28px auto 0;background:#fff;border-radius:16px;padding:16px 20px;font-size:13px;color:var(--text2);line-height:1.6}
+  .note b{color:var(--text);font-weight:600}
+</style>
+</head>
+<body>
+<h1>Anúncio na web, v3: componentes da tela real do app</h1>
+<p class="sub">Cores, raios, sombras, fontes e blocos copiados de <code>card_detail_screen.dart</code> e <code>app_theme.dart</code>. Só o Chat. Toque em Conversar, no olho, em “Preços de mercado” ou em Baixar.</p>
+
+<h2>Celular</h2>
+<div class="mobilewrap">
+  <div class="phone"><div class="screen" id="m">
+    <div class="notch"></div>
+    <div class="smart"><div class="applogo"><span class="ms">style</span></div><div><div class="t1">CardTroca</div><div class="t2">Grátis na App Store e Google Play</div></div><button class="dl">Baixar</button></div>
+    <div class="scroll" data-slot="detail" data-mobile="1"></div>
+    <div class="footer" data-slot="footer"></div>
+    <div class="url"><div>🔒 cardtroca.com/card/41ab…</div></div>
+    <div class="sheetbg"></div>
+    <div class="sheet"><div class="grab"></div><div data-slot="dl"></div></div>
+  </div></div>
+</div>
+
+<h2>Computador</h2>
+<p class="sub">Mesmos blocos lado a lado. No computador, a janela de download traz um QR code para abrir no celular.</p>
+<div class="deskfit" id="deskfit">
+  <div class="browser" id="browser">
+    <div class="chrome"><i></i><i></i><i></i><div class="addr">🔒 cardtroca.com/card/41ab9e2c</div></div>
+    <div class="page" id="d">
+      <div class="pscroll">
+        <div class="nav"><span class="brand">CardTroca</span><a href="#">Funcionalidades</a><a href="#">Central de ajuda</a><span class="sp"></span><button class="dl">Baixar o app</button></div>
+        <div class="dmain">
+          <div class="dstage">
+            <div class="actions"><button class="circle dl" title="Observar"><span class="ms">visibility</span></button><button class="circle share" title="Compartilhar"><span class="ms">ios_share</span></button></div>
+            <div class="tiltwrap"><div class="tcard" style="width:330px"><img src="img/swsh7-215.png"><div class="shine"></div></div></div>
+            <div class="herotag"><span class="ms">verified</span>Imagem oficial</div>
+          </div>
+          <div class="dright" data-slot="detail-right"></div>
+        </div>
+        <div class="more dmore" data-slot="more"></div>
+        <div class="foot"><span>© 2026 CardTroca</span><span>Termos de uso · Política de privacidade</span></div>
+      </div>
+      <div class="modalbg"></div>
+      <div class="modal">
+        <button class="circle x"><span class="ms">close</span></button>
+        <div data-slot="dl"></div>
+        <div class="qrbox"><svg class="qr" id="qr" viewBox="0 0 29 29" shape-rendering="crispEdges"></svg><p><b>Aponte a câmera do celular</b><br>para baixar o app e abrir este anúncio</p></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="note">
+  <b>O que mudou em relação à v2</b>, para ficar igual ao app:
+  fundo do topo com degradê branco em vez de verde-menta; blocos brancos com cantos de 22 e sombra suave, sem bordas; preço grande em preto com a pílula “abaixo da média”; distância com ícone; card do vendedor com plano e estrelas (sem medalha, que ainda não está liberada para todos); “Preços de mercado” e “Ficha da carta” como blocos que abrem e fecham; barra flutuante de vidro com preço à esquerda e “Conversar” à direita; Poppins até peso 600.
+  O tilt com faixa de brilho branca é o do visualizador da coleção. No detalhe do app a carta fica parada. Aqui ela inclina com o giroscópio ou o mouse.
+  A faixa “Baixar” no topo e a janela de download existem só na web.
+</div>
+
+<!-- ======== templates ======== -->
+<template id="tpl-top">
+  <div class="stage" style="height:426px;padding-top:96px">
+    <div class="mtop"><button class="circle dl"><span class="ms">visibility</span></button><button class="circle share"><span class="ms">ios_share</span></button></div>
+    <div class="tiltwrap" style="padding:8px 0 44px"><div class="tcard" style="width:196px"><img src="img/swsh7-215.png"><div class="shine"></div></div></div>
+    <div class="herotag"><span class="ms">verified</span>Imagem oficial</div>
+  </div>
+</template>
+
+<template id="tpl-cards">
+  <div class="dcard">
+    <div class="name">Umbreon VMAX</div>
+    <div class="setline">Evolving Skies · 215/203</div>
+    <div class="chips"><span class="chip nm">NM</span><span class="chip lang">Inglês</span><span class="chip st">Venda e Troca</span></div>
+    <div class="pricecap">Preço pedido</div>
+    <div class="pricerow"><div class="price">R$ 2.890,00</div><div class="delta"><span class="ms">trending_down</span>R$ 230 abaixo da média</div></div>
+    <div class="avgline">Média de mercado: R$ 3.120,00 (Liga Pokémon)</div>
+    <div class="divider"></div>
+    <div class="loc"><div class="iconbox mint"><span class="ms">near_me</span></div><div><div class="t1">Curitiba, PR</div><div class="t2">Localização do vendedor</div></div></div>
+  </div>
+  <div class="dcard">
+    <div class="seller dl-profile">
+      <div class="avatar">L</div>
+      <div style="min-width:0">
+        <div class="sname">Lucas P. <span class="plan"><span class="ms">star</span>Pro</span></div>
+        <div class="scity"><span class="ms">location_on</span>Curitiba, PR</div>
+        <div class="medalline"><span style="color:#D98E04;letter-spacing:1px">★★★★★</span> 5,0 · 21 avaliações</div>
+      </div>
+      <span class="ms chev">chevron_right</span>
+    </div>
+  </div>
+  <div class="dcard notes">
+    <div class="cap">Observações do vendedor</div>
+    <p>Carta tirada do booster direto para o sleeve + toploader. Envio com rastreio ou entrega em mãos no centro.</p>
+  </div>
+  <div class="exp market">
+    <div class="head"><div class="iconbox gray"><span class="ms">bar_chart</span></div><div><div class="t1">Preços de mercado</div><div class="t2">CardTroca, Liga Pokémon, TCGplayer e eBay</div></div><span class="ms chev">expand_more</span></div>
+    <div class="content">
+      <div class="lock dl">
+        <div class="blur">
+          <div class="srcrow"><span>CardTroca</span><b>R$ 2.950</b></div>
+          <div class="srcrow"><span>Liga Pokémon</span><b>R$ 3.120</b></div>
+          <div class="srcrow"><span>TCGplayer</span><b>US$ 541</b></div>
+          <div class="bars"><i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:70%"></i><i style="height:62%"></i><i style="height:85%"></i><i style="height:78%"></i><i style="height:66%"></i></div>
+        </div>
+        <div class="over"><div class="pill"><span class="ms">lock</span>Histórico de preço no app</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="exp">
+    <div class="head"><div class="iconbox gray"><span class="ms">style</span></div><div><div class="t1">Ficha da carta</div><div class="t2">Coleção, número, raridade e variante</div></div><span class="ms chev">expand_more</span></div>
+    <div class="content">
+      <div class="spec"><span>Coleção</span><b>Evolving Skies</b></div>
+      <div class="spec"><span>Número</span><b>215/203</b></div>
+      <div class="spec"><span>Idioma</span><b>Inglês</b></div>
+      <div class="spec"><span>Condição</span><b>Near Mint (NM)</b></div>
+      <div class="spec"><span>Raridade</span><b>Secreta</b></div>
+      <div class="spec"><span>Variante</span><b>holo</b></div>
+    </div>
+  </div>
+</template>
+
+<template id="tpl-more">
+  <h3>Mais cartas de Lucas <a href="#">Ver perfil</a></h3>
+  <div class="tiles">
+    <div class="tile"><img src="img/base1-2.png"><div class="tn">Blastoise</div><div class="tp">R$ 690,00</div><div class="tc">Base Set</div></div>
+    <div class="tile"><img src="img/base1-10.png"><div class="tn">Mewtwo</div><div class="tp">R$ 420,00</div><div class="tc">Base Set</div></div>
+    <div class="tile"><img src="img/sv3pt5-6.png"><div class="tn">Charizard ex</div><div class="tp">R$ 310,00</div><div class="tc">151</div></div>
+    <div class="tile"><img src="img/base1-15.png"><div class="tn">Venusaur</div><div class="tp">R$ 380,00</div><div class="tc">Base Set</div></div>
+    <div class="tile"><img src="img/sm12-194.png"><div class="tn">Mewtwo & Mew GX</div><div class="tp">R$ 1.150,00</div><div class="tc">Cosmic Eclipse</div></div>
+    <div class="tile"><img src="img/swsh12-138.png"><div class="tn">Lugia V</div><div class="tp">R$ 240,00</div><div class="tc">Silver Tempest</div></div>
+  </div>
+</template>
+
+<template id="tpl-footer">
+  <div class="glassbar">
+    <div><div class="cap">Preço pedido</div><div class="val">R$ 2.890,00</div></div>
+    <button class="chatbar dl"><span class="ms">chat_bubble_outline</span>Conversar</button>
+  </div>
+</template>
+
+<template id="tpl-dl">
+  <div class="dl-head"><div class="dl-thumb"><img src="img/swsh7-215.png"></div>
+    <div><div class="dl-title">Continue no app do CardTroca</div><div class="t2" style="margin-top:2px">É grátis. Este anúncio abre direto no app.</div></div></div>
+  <ul class="feats">
+    <li><div class="iconbox mint"><span class="ms">chat_bubble_outline</span></div><div><div class="t1">Chat com o vendedor</div><div class="t2">Combine preço, troca e entrega</div></div></li>
+    <li><div class="iconbox mint"><span class="ms">bar_chart</span></div><div><div class="t1">Histórico de preço</div><div class="t2">CardTroca, Liga Pokémon, TCGplayer e eBay</div></div></li>
+    <li><div class="iconbox mint"><span class="ms">notifications</span></div><div><div class="t1">Notificações</div><div class="t2">Aviso quando o preço baixar ou chegar oferta</div></div></li>
+    <li><div class="iconbox mint"><span class="ms">more_horiz</span></div><div><div class="t1">E mais</div><div class="t2">Troca, pagamento protegido, sua coleção</div></div></li>
+  </ul>
+  <div class="stores">
+    <a class="store"><svg viewBox="0 0 24 24"><path d="M16.37 12.6c-.02-2.2 1.8-3.26 1.88-3.31-1.02-1.5-2.62-1.7-3.19-1.72-1.36-.14-2.65.8-3.34.8-.69 0-1.75-.78-2.88-.76-1.48.02-2.85.86-3.61 2.19-1.54 2.67-.39 6.62 1.11 8.79.73 1.06 1.6 2.25 2.75 2.2 1.1-.04 1.52-.71 2.85-.71s1.7.71 2.87.69c1.18-.02 1.93-1.08 2.66-2.14.84-1.23 1.18-2.42 1.2-2.48-.03-.01-2.3-.88-2.3-3.55zM14.18 6.13c.61-.74 1.02-1.76.91-2.78-.88.04-1.94.58-2.57 1.32-.56.65-1.06 1.7-.92 2.7.98.08 1.97-.5 2.58-1.24z"/></svg><div><small>Baixar na</small><b>App Store</b></div></a>
+    <a class="store"><svg viewBox="0 0 24 24"><path d="M3.6 2.2c-.2.2-.3.6-.3 1v17.6c0 .4.1.8.3 1l.1.1 9.9-9.9v-.2L3.7 2.1l-.1.1zm13.3 13.2-3.3-3.3v-.2l3.3-3.3.1.1 3.9 2.2c1.1.6 1.1 1.7 0 2.3l-3.9 2.2h-.1zm-.1.1L13.4 12l-9.8 9.8c.4.4 1 .4 1.7.1l11.5-6.4M16.8 8.5 5.3 2c-.7-.4-1.3-.3-1.7.1l9.8 9.9 3.4-3.5z"/></svg><div><small>Disponível no</small><b>Google Play</b></div></a>
+  </div>
+  <a class="already">Já tenho o app · Abrir</a>
+</template>
+
+<script>
+  const clone = id => document.getElementById(id).content.cloneNode(true);
+  // Celular: topo + blocos + mais cartas, barra flutuante, folha
+  const m = document.getElementById('m');
+  const ms = m.querySelector('[data-slot=detail]');
+  ms.appendChild(clone('tpl-top'));
+  ms.appendChild(clone('tpl-cards'));
+  const mm = document.createElement('div'); mm.className = 'more'; mm.appendChild(clone('tpl-more')); ms.appendChild(mm);
+  const pad = document.createElement('div'); pad.style.height = '170px'; ms.appendChild(pad);
+  m.querySelector('[data-slot=footer]').appendChild(clone('tpl-footer'));
+  // Desktop
+  const d = document.getElementById('d');
+  const right = d.querySelector('[data-slot=detail-right]');
+  right.appendChild(clone('tpl-cards'));
+  const f = document.createElement('div'); f.className = 'footer'; f.appendChild(clone('tpl-footer')); right.insertBefore(f, right.children[1]);
+  d.querySelector('[data-slot=more]').appendChild(clone('tpl-more'));
+  d.querySelector('.market').classList.add('open');
+  // Download
+  m.querySelector('[data-slot=dl]').appendChild(clone('tpl-dl'));
+  d.querySelector('[data-slot=dl]').appendChild(clone('tpl-dl'));
+  d.querySelector('.modal .already').remove();
+  
+
+  [m, d].forEach(root => {
+    root.querySelectorAll('.exp .head').forEach(h => h.addEventListener('click', () => h.parentElement.classList.toggle('open')));
+    root.querySelectorAll('.dl').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); root.classList.add('open'); }));
+    root.querySelectorAll('.sheetbg, .modalbg, .x, .already').forEach(b => b.addEventListener('click', () => root.classList.remove('open')));
+  });
+  // Mobile: deixa "Preços de mercado" aberto para mostrar o blur
+  m.querySelector('.market').classList.add('open');
+
+  // Tilt + faixa de brilho (card_viewer_scaffold.dart: _maxTilt .14 rad ≈ 8°)
+  const MAX = 8;
+  document.querySelectorAll('.tcard').forEach(card => {
+    const shine = card.querySelector('.shine');
+    let t = Math.random()*6, hovering = false;
+    const apply = (x, y) => {
+      card.style.transform = `rotateX(${-y*MAX}deg) rotateY(${x*MAX}deg)`;
+      shine.style.backgroundPosition = `${50 - x*60}% ${50 - y*30}%`;
+    };
+    const area = card.closest('.stage, .dstage');
+    area.addEventListener('mousemove', e => {
+      hovering = true; const r = card.getBoundingClientRect();
+      const c = v => Math.max(-1, Math.min(1, v));
+      apply(c(((e.clientX - r.left)/r.width - .5)*2), c(((e.clientY - r.top)/r.height - .5)*2));
+    });
+    area.addEventListener('mouseleave', () => hovering = false);
+    (function idle(){ if(!hovering){ t += .016; apply(Math.sin(t)*.5, Math.cos(t*.8)*.3); } requestAnimationFrame(idle); })();
+  });
+
+  // QR ilustrativo
+  (function(){
+    const qr = document.getElementById('qr'); let s = '', seed = 7;
+    const rnd = () => (seed = (seed*9301+49297)%233280)/233280;
+    const finder = (x,y) => { s += `<rect x="${x}" y="${y}" width="7" height="7" fill="#11161D"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="#fff"/><rect x="${x+2}" y="${y+2}" width="3" height="3" fill="#11161D"/>`; };
+    for (let y=0;y<29;y++) for (let x=0;x<29;x++){
+      const inF = (x<8&&y<8)||(x>20&&y<8)||(x<8&&y>20);
+      if(!inF && rnd()>.52) s += `<rect x="${x}" y="${y}" width="1" height="1" fill="#11161D"/>`;
+    }
+    finder(0,0); finder(22,0); finder(0,22);
+    s += `<rect x="11.5" y="11.5" width="6" height="6" rx="1.4" fill="#029779"/>`;
+    qr.innerHTML = s;
+  })();
+
+  function fit(){
+    const box = document.getElementById('deskfit'), b = document.getElementById('browser');
+    const k = Math.min(1, box.clientWidth/1180); b.style.transform = `scale(${k})`;
+    box.style.height = (b.offsetHeight*k) + 'px';
+  }
+  addEventListener('resize', fit); fit();
+</script>
+</body>
+</html>

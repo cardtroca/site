@@ -673,11 +673,23 @@ function useSafeAreaColor(ref: React.RefObject<HTMLDivElement | null>) {
     if (!el) return;
     const root = document.documentElement;
     const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    // Medidas só mudam com o tamanho da janela ou da página; na rolagem basta o scrollY.
+    // A cor só é gravada quando muda, para não repintar a tela a cada quadro.
+    let top = 0;
+    let radius = 1;
+    let viewport = 0;
+    let last = "";
     let frame = 0;
+    const measure = () => {
+      top = el.getBoundingClientRect().top + window.scrollY;
+      radius = el.offsetHeight * 0.6;
+      viewport = window.innerHeight;
+    };
     const paint = () => {
       frame = 0;
-      const bottom = window.innerHeight - el.getBoundingClientRect().top;
-      const color = bgColorAt(Math.max(0, bottom / (el.offsetHeight * 0.6)));
+      const color = bgColorAt(Math.max(0, (window.scrollY + viewport - top) / radius));
+      if (color === last) return;
+      last = color;
       root.style.backgroundColor = color;
       document.body.style.backgroundColor = color;
       meta?.setAttribute("content", color);
@@ -685,13 +697,21 @@ function useSafeAreaColor(ref: React.RefObject<HTMLDivElement | null>) {
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(paint);
     };
+    const onResize = () => {
+      measure();
+      schedule();
+    };
+    const observer = new ResizeObserver(onResize);
+    observer.observe(el);
+    measure();
     paint();
     window.addEventListener("scroll", schedule, { passive: true });
-    window.addEventListener("resize", schedule);
+    window.addEventListener("resize", onResize);
     return () => {
+      observer.disconnect();
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", schedule);
-      window.removeEventListener("resize", schedule);
+      window.removeEventListener("resize", onResize);
       root.style.backgroundColor = "";
       document.body.style.backgroundColor = "";
     };

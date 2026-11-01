@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export const viewport: Viewport = { themeColor: "#F5F6F6" };
+export const viewport: Viewport = { themeColor: "#F5F6F6", viewportFit: "cover" };
 
 /** 404 do site inteiro (inclui notFound() do anúncio e do perfil), no visual do app. */
 export default function NotFound() {

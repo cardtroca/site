@@ -47,7 +47,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ...(data.kind === "not_found"
       ? {}
       : { other: { "apple-itunes-app": `app-id=${APP_STORE_ID}, app-argument=${url}` } }),
-    openGraph: { title: og.title, description: og.description, url, siteName: "CardTroca", images },
+    openGraph: {
+      type: "website", locale: "pt_BR", title: og.title, description: og.description, url, siteName: "CardTroca", images,
+    },
     twitter: { card: "summary_large_image", title: og.title, description: og.description, images },
   };
 }

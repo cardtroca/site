@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { firstName, gateFeatures, gateSubtitle, gateTitle } from "./gate";
+import { firstName } from "./format";
+import { gateFeatures, gateSubtitle, gateTitle } from "./gate";
 
 const listing = { kind: "listing", imageUrl: null } as const;
 const profile = { kind: "profile", name: "Lucas Pacheco", avatarUrl: null, initial: "L" } as const;

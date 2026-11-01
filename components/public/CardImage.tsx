@@ -14,9 +14,18 @@ function PokeballPlaceholder() {
   );
 }
 
-export function CardImage({ url, alt }: { url: string | null; alt: string }) {
+/** `lazy`: imagens de grade abaixo da dobra; a carta principal carrega já. */
+export function CardImage({ url, alt, lazy = false }: { url: string | null; alt: string; lazy?: boolean }) {
   const [failed, setFailed] = useState(false);
   if (!url || failed) return <PokeballPlaceholder />;
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img className="cardimg" src={url} alt={alt} onError={() => setFailed(true)} />;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      className="cardimg"
+      src={url}
+      alt={alt}
+      {...(lazy ? { loading: "lazy" as const, decoding: "async" as const } : {})}
+      onError={() => setFailed(true)}
+    />
+  );
 }

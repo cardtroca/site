@@ -26,7 +26,8 @@ export function AppGateContent({
   inApp: boolean;
   isMobile: boolean;
 }) {
-  const showAlready = isMobile && (platform === "ios" || platform === "android");
+  // No Safari do iPhone o link só recarregaria a página; lá a Smart App Banner abre o app.
+  const showAlready = isMobile && (platform === "android" || (platform === "ios" && inApp));
 
   return (
     <>
@@ -65,7 +66,7 @@ export function AppGateContent({
         (platform === "ios" && inApp ? (
           <div className="already already-hint">Toque em ⋯ e escolha Abrir no navegador</div>
         ) : (
-          <a className="already" href={platform === "android" ? androidIntentUrl(path) : path}>
+          <a className="already" href={androidIntentUrl(path)}>
             Já tenho o app · Abrir
           </a>
         ))}

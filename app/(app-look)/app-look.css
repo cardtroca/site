@@ -15,6 +15,8 @@
   -webkit-font-smoothing: antialiased;
 }
 .app-look *, .app-look *::before, .app-look *::after { box-sizing: border-box; }
+/* Overscroll (puxar além do topo/fim) também claro, mesmo com o site em modo escuro. */
+html:has(.app-look), html:has(.app-look) body { background: #F5F6F6; color-scheme: light; }
 
 .app-look .app-card {
   background: var(--surface);
@@ -100,11 +102,6 @@
   position: absolute; left: 4px; top: 4px; background: rgba(255,255,255,.92); border-radius: 999px;
   padding: 1px 5px; font-size: 10px; font-weight: 600; color: rgba(0,0,0,.87);
 }
-.app-look .tile .eye {
-  position: absolute; right: 4px; top: 4px; width: 22px; height: 22px; border-radius: 50%;
-  background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; color: var(--text);
-}
-.app-look .tile .eye .ms { font-size: 14px; }
 .app-look .tile .tn, .app-look .tile .tc { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .app-look .tile .tn { font-size: 12px; font-weight: 500; margin-top: 6px; }
 .app-look .tile .tp { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }

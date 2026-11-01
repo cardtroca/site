@@ -20,7 +20,7 @@ export function ListingTileCard({ tile, href, showPrice, showEye, onGate, gateOr
   const body = (
     <>
       <div className="timg">
-        <CardImage url={tile.imageUrl} alt={tile.name} />
+        <CardImage url={tile.imageUrl} alt={tile.name} lazy />
         <span className="lang">{languageShort(tile.language)}</span>
       </div>
       <div className="tn">{tile.name}</div>

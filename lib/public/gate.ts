@@ -1,12 +1,10 @@
+import { firstName } from "./format";
+
 export type GateSubject =
   | { kind: "listing"; imageUrl: string | null }
   | { kind: "profile"; name: string; avatarUrl: string | null; initial: string };
 
 export type GateFeature = { icon: string; title: string; text: string };
-
-export function firstName(name: string): string {
-  return name.trim().split(/\s+/)[0] ?? "";
-}
 
 export function gateTitle(subject: GateSubject): string {
   return subject.kind === "listing"

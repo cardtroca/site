@@ -21,7 +21,7 @@ export const metadata: Metadata = {
  * landing, e `cover` para ela ir até as bordas do iPhone (as seções já usam
  * env(safe-area-inset-*)).
  */
-export const viewport: Viewport = { themeColor: "#040A09", viewportFit: "cover" };
+export const viewport: Viewport = { themeColor: "#0A231E", viewportFit: "cover" };
 
 export default function Home() {
   return (

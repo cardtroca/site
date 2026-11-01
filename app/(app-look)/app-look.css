@@ -110,6 +110,15 @@
 .app-look .tile .tp { font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
 .app-look .tile .tc { font-size: 11px; color: var(--text-2); }
 
+/* Olho de observar: fora do link, por cima da imagem (6px do tile + 4px da imagem) */
+.app-look .tile-wrap { position: relative; min-width: 0; }
+.app-look .tile-eye {
+  position: absolute; right: 10px; top: 10px; z-index: 1; width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center;
+  color: var(--text); border: none; padding: 0; cursor: pointer;
+}
+.app-look .tile-eye .ms { font-size: 14px; }
+
 /* Aviso "Link copiado" */
 .app-look .toast {
   position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
@@ -365,6 +374,92 @@
 }
 .app-look .lp-foot a { color: inherit; text-decoration: none; }
 
+/* ───────── Perfil (/profile/[userId]) ───────── */
+.app-look .pp { padding-bottom: env(safe-area-inset-bottom); }
+.app-look .pp-left { position: relative; }
+.app-look .pp-sharebar { display: flex; justify-content: flex-end; padding: 4px 16px 0; }
+
+/* Topo (ProfileHeader) */
+.app-look .pp-header { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 8px 16px 0; }
+.app-look .pp-avatar { width: 92px; height: 92px; border-radius: 50%; background: var(--surface); padding: 3px; box-shadow: var(--shadow-soft); flex: none; }
+.app-look .pp-avatar > div {
+  width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: var(--primary-dark);
+  color: #fff; font-size: 34px; font-weight: 600; display: flex; align-items: center; justify-content: center;
+}
+.app-look .pp-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.app-look .pp-name {
+  font-size: 22px; font-weight: 600; letter-spacing: -.3px; line-height: 1.25; margin: 12px 0 0; max-width: 100%;
+  overflow-wrap: anywhere; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
+}
+.app-look .pp-meta { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px; margin-top: 6px; max-width: 100%; }
+.app-look .pp-plan {
+  height: 22px; display: inline-flex; align-items: center; gap: 3px; padding: 0 8px; border-radius: 999px;
+  font-size: 11px; font-weight: 600; background: var(--surface-var); color: var(--text-2); flex: none;
+}
+.app-look .pp-plan .ms { font-size: 12px; }
+.app-look .pp-plan.paid { background: var(--primary-dark); color: #fff; }
+.app-look .pp-beta { height: 22px; }
+.app-look .pp-place { display: inline-flex; align-items: center; gap: 2px; font-size: 13px; color: var(--text-2); min-width: 0; overflow-wrap: anywhere; }
+.app-look .pp-place .ms { font-size: 14px; flex: none; }
+.app-look .pp-bio {
+  font-size: 14px; color: var(--text-2); margin: 10px 0 0; line-height: 1.45; max-width: 100%;
+  overflow-wrap: anywhere; white-space: pre-line;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
+}
+.app-look .pp-follow {
+  width: 100%; height: 46px; margin-top: 16px; border: none; border-radius: 999px; background: var(--primary-dark); color: #fff;
+  font: 600 14px var(--font-poppins), Poppins, sans-serif; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;
+}
+.app-look .pp-follow .ms { font-size: 18px; }
+
+/* Card de números (ProfileStatsCard) */
+.app-look .pp-stats {
+  width: 100%; margin-top: 16px; background: var(--surface); border-radius: 22px; box-shadow: var(--shadow-soft);
+  display: flex; padding: 14px 4px;
+}
+.app-look .pp-stat {
+  /* max-content: "Sem avaliações" cabe inteiro em 360px; a coluna cresce só o necessário */
+  flex: 1 1 0; min-width: max-content; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: none; border: none; padding: 0 3px; margin: 0; font: inherit; color: inherit;
+}
+.app-look .pp-stat.tap { cursor: pointer; }
+.app-look .pp-stat.tap:active { transform: scale(.97); }
+.app-look .pp-stat b { font-size: 17px; font-weight: 600; line-height: 1.2; display: flex; align-items: center; justify-content: center; gap: 2px; }
+.app-look .pp-stat b .ms { font-size: 17px; color: var(--warn); }
+.app-look .pp-stat span { font-size: 11px; color: var(--text-2); max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.app-look .pp-stat.tap span { color: var(--primary); font-weight: 500; }
+.app-look .pp-vsep { width: 1px; background: rgba(227, 230, 230, .7); margin: 4px 0; flex: none; }
+
+/* Abas (_TabsHeader); a faixa "Baixar" tem 52px e fica presa no topo */
+.app-look .pp-tabs { position: sticky; top: 52px; z-index: 6; background: var(--bg); padding: 16px 16px 8px; }
+.app-look .pp-seg { position: relative; display: flex; background: var(--surface-var); border-radius: 999px; padding: 4px; }
+.app-look .pp-thumb {
+  position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); background: var(--surface);
+  border-radius: 999px; box-shadow: var(--shadow-subtle); transition: transform .25s cubic-bezier(.2, .8, .2, 1);
+}
+.app-look .pp-seg[data-tab="1"] .pp-thumb { transform: translateX(100%); }
+.app-look .pp-seg button {
+  position: relative; flex: 1; min-width: 0; height: 36px; border: none; background: none; padding: 0 6px; cursor: pointer;
+  font: 500 13px var(--font-poppins), Poppins, sans-serif; color: var(--text-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.app-look .pp-seg button.on { color: var(--text); font-weight: 600; }
+.app-look .pp-count { display: flex; align-items: center; justify-content: space-between; padding: 2px 12px 2px 20px; font-size: 13px; color: var(--text-2); }
+.app-look .pp-filter {
+  display: flex; align-items: center; gap: 4px; border: none; background: none; padding: 8px; cursor: pointer;
+  font: 600 13px var(--font-poppins), Poppins, sans-serif; color: var(--text);
+}
+.app-look .pp-filter.off { visibility: hidden; }
+.app-look .pp-filter .ms { font-size: 18px; }
+.app-look .pp-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding: 4px 16px 32px; }
+.app-look .pp-empty { padding: 48px 32px; text-align: center; color: var(--text-2); }
+.app-look .pp-empty .ms { font-size: 40px; color: var(--text-3); }
+.app-look .pp-empty p { margin: 10px 0 0; font-size: 14px; line-height: 1.45; }
+
+@media (prefers-reduced-motion: reduce) {
+  .app-look .pp-thumb { transition: none; }
+}
+
 /* Menu do site sempre claro aqui, mesmo com html.dark (as páginas são sempre claras).
    Tokens copiados do :root de app/globals.css; não afeta o menu nas outras rotas. */
 .dark .app-look .lp-nav {
@@ -439,6 +534,23 @@
   .app-look .lp-unav .stores { flex-direction: row; }
   .app-look .lp-unav .store { flex: 1; }
   .app-look .lp-unav-page .lp-more { padding-bottom: 8px; }
+
+  /* Perfil: topo numa coluna fixa de 340px, grade de 5 colunas à direita */
+  .app-look .pp-main {
+    display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 32px; align-items: start;
+    max-width: 1280px; margin: 0 auto; padding: 28px 48px 40px;
+  }
+  .app-look .pp-left {
+    position: sticky; top: 96px; background: var(--surface); border-radius: 28px;
+    box-shadow: var(--shadow-soft); padding: 28px 22px 22px;
+  }
+  .app-look .pp-sharebar { position: absolute; top: 16px; right: 16px; padding: 0; z-index: 1; }
+  .app-look .pp-left .pp-stats { box-shadow: none; background: var(--bg); }
+  .app-look .pp-right { min-width: 0; }
+  .app-look .pp-tabs { top: 72px; padding: 0 0 8px; }
+  .app-look .pp-seg { max-width: 420px; }
+  .app-look .pp-count { padding: 10px 0 4px 4px; }
+  .app-look .pp-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; padding: 4px 0 24px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .app-look .lp-exp-chev { transition: none; }

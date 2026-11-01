@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { Navigation } from "@/components/layout/Navigation";
 import { AppGateProvider } from "@/components/public/AppGate";
 import { GatedAppBanner } from "@/components/public/GatedAppBanner";
-import { GatedNavigation } from "@/components/public/GatedNavigation";
+import { DesktopFooter, DesktopNav } from "@/components/public/PageChrome";
 import { CardSpecs } from "@/components/public/listing/CardSpecs";
 import { FloatingCta } from "@/components/public/listing/FloatingCta";
 import { Gallery } from "@/components/public/listing/Gallery";
@@ -48,26 +47,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: { title: og.title, description: og.description, url, siteName: "CardTroca", images },
     twitter: { card: "summary_large_image", title: og.title, description: og.description, images },
   };
-}
-
-/** `gated`: o "Baixe o App" abre a janela (origem "nav"); sem ela, abre a loja. */
-function DesktopNav({ gated = false }: { gated?: boolean }) {
-  return (
-    <div className="lp-nav">
-      {gated ? <GatedNavigation /> : <Navigation />}
-    </div>
-  );
-}
-
-function DesktopFooter() {
-  return (
-    <footer className="lp-foot">
-      <span>© {new Date().getFullYear()} CardTroca</span>
-      <span>
-        <a href="/termos-de-uso">Termos de uso</a> · <a href="/politica-de-privacidade">Política de privacidade</a>
-      </span>
-    </footer>
-  );
 }
 
 export default async function CardPage({ params }: Props) {

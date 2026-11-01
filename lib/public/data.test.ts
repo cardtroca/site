@@ -105,6 +105,15 @@ describe("getProfilePage", () => {
     expect(nonNull).toEqual([...nonNull].sort((a, b) => b - a));
   });
 
+  it("vendedor sem avaliações e sem anúncios: ok com listas vazias", async () => {
+    const r = await getProfilePage(FIXTURE_IDS.noReviewsSeller, fixtureSource);
+    if (r.kind !== "ok") throw new Error("esperado ok");
+    expect(r.seller.totalReviews).toBe(0);
+    expect(r.seller.planLabel).toBeNull();
+    expect(r.forSale).toEqual([]);
+    expect(r.collection).toEqual([]);
+  });
+
   it("corta em 300 com aviso", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
     const rows = Array.from({ length: 350 }, (_, i) => ({ id: `id${i}`, user_id: FIXTURE_IDS.seller, status: "sale", asking_price: i, sold_at: null }));
